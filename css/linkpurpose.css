@@ -1,0 +1,20 @@
+.link-purpose-nobreak {
+    white-space: nowrap;
+}
+
+.link-purpose-icon {
+    margin-left: .125em;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    overflow: hidden;
+    text-indent: 1em;
+    vertical-align: middle;
+}
+.link-purpose-icon svg {
+    width: .875em;
+    height: .875em;
+    margin: -1px 1em 0 -1em;
+    vertical-align: top;
+}
+

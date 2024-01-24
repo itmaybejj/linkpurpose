@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" media="all" href="../css/linkpurpose.css">
+    </head>
+<body>
+    <header>
+        <h1>Link Purpose tests</h1>
+    </header>
+    <main>
+        <section id="external">
+            <ul>
+                <li>
+                    <a href="https://www.princeton.edu">External link</a>
+                </li>
+                <li style="width: 20em;">
+                    An <a href="https://www.princeton.edu">External link</a> inline in a sentence that breaks over several lines, followed by more words on a line that should have the same line height.
+                </li>
+            </ul>
+
+        </section>
+        <section id="new-window">
+            <ul>
+                <li>
+                    <a href="/" target="_blank">New window link</a>
+                </li>
+            </ul>
+        </section>
+        <section id="document">
+            <ul>
+                <li>
+                    <a href="/example.pdf">PDF link</a>
+                </li>
+                <li>
+                    <a href="/exampl.pdf" target="_blank">PDF new window link</a>
+                </li>
+            </ul>
+        </section>
+        <section id="new window">
+
+        </section>
+        <section id="chaining">
+
+        </section>
+
+
+
+        <script src="../js/linkpurpose.js"></script>
+        <!-- Instantiate-->
+        <script>
+          const linkPurpose = new LinkPurpose({
+            
+          });
+
+          /*let inject = document.querySelector('#all-tests');
+          for (const [key, value] of Object.entries(Ed11y.M)) {
+            if (value.title && typeof value.tip()) {
+              let item = document.createElement('div');
+              item.innerHTML = value.tip('example');
+              let title = document.createElement('h3');
+              title.prepend(value.title);
+              item.prepend(title);
+              inject.append(item);
+            };
+          }*/
+        </script>
+
+        <style>
+            a:hover {
+                color: wheat;
+                background-color: brown;
+            }
+        </style>
+    </main>
+</body>
