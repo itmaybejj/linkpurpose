@@ -1,0 +1,29 @@
+{
+  "name": "linkpurpose",
+  "version": "1.0.0",
+  "description": "Provides visible and screen reader indicators for external, document, email and new window links.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itmaybejj/linkpurpose.git"
+  },
+  "author": "itmaybejj",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/itmaybejj/linkpurpose/issues"
+  },
+  "homepage": "https://github.com/itmaybejj/linkpurpose#readme",
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.1.1"
+  }
+}

@@ -17,4 +17,12 @@
     margin: -1px 1em 0 -1em;
     vertical-align: top;
 }
+.link-purpose-mail-icon svg {
+    margin-top: 0;
+}
+
+.link-purpose-icon.svg-inline--fa {
+  margin-top: -.25rem;
+  height: .8125em;
+}
 
