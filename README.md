@@ -2,20 +2,46 @@
 
 Vanilla JS to mark external links, links that open in new windows, links to documents and links that send emails.
 
-The last word of the link is also wrapped into a span with the icon, preventing line breaks between the text and the icon.
+Why JS? 
+1. The last word of the link can be wrapped into a span with the icon, preventing line breaks between the text and the icon.
+2. Inline SVG can be used, taking advantage of CSS's currentColor fill to follow the link text's color through hover and focus states.
+3. Visually hidden, translatable text can be provided for screen readers.
+4. Links inside Shadow DOM components can be marked as well.
+
+The library accepts numerous parameters for which links to mark and how. By default, it will convert this:
+```
+<a href="https://example.com">
+    EXAMPLE LINK
+</a>
+```
+to:
+```
+<a href="https://example.com" class="link-purpose link-purpose-external">
+    EXAMPLE 
+    <span class="link-purpose-nobreak">
+        LINK
+        <span class="link-purpose-icon link-purpose-external-icon">
+            <svg ...></svg>
+            <span class="link-purpose-text">
+                (Link is external)
+            </span>
+        </span>
+    </span>
+</a>
+```
 
 You can also bring your own icons: inline SVG, remote img files and class-based symbol fonts (e.g. FontAwesome) are supported.
 
 ## Basic use
 
-Attach the JS and (optionally) the default CSS:
+Download and attach the JS and the default CSS:
 ```
-<link rel="stylesheet" media="all" href="../css/linkpurpose.css">
+<link rel="stylesheet" media="all" href="/YOUR-PATH-TO/linkpurpose.css">
 
-<script src="../js/linkpurpose.js"></script>
+<script src="/YOUR-PATH-TO/linkpurpose.min.js"></script>
 ```
 
-And then call the library, specifying any URLS that should be treated as internal links
+And then call the library, optionally specifying domains that should be treated as internal links:
 ```
 <script>
 
@@ -35,15 +61,19 @@ And that's it.
 
 Default parameters may be overridden when calling the library.
 
-E.g., to set your own classes for all marked links, override the "base" classes:
+E.g., to set your own classes for all marked links, override the "allPurposes" classes:
 
 ```
 <script>
     const linkPurpose = new LinkPurpose({
-        base: {
+        
+        domain: 'https://example.com, https://example.dev',
+
+        allPurposes: {
             linkClass: 'my-better-class',
             iconWrapperClass: 'my-better-icon-class',
         }
+
     })
 </script>
 ```
@@ -52,73 +82,87 @@ You only have to list options you want to override; any "missing" keys will fall
 
 ### Using class-based icon fonts 
 
-This assumes you already have a class-based library on the page. 
+This assumes you already have a class-based icon library on the page. 
 
-Here's an example configuration that switches all four icons to use [FontAwesome](https://fontawesome.com/docs/web/setup/get-started) classes rather than the included inline ([Material](https://fonts.google.com/icons)) icons:
+Here's an example configuration that switches all four default purposes to use classes rather than the included inline ([Material](https://fonts.google.com/icons)) SVG icons. [FontAwesome](https://fontawesome.com/docs/web/setup/get-started) icon classes are provided by default:
 
 ```
-external: {
-    iconType: 'classes',
-},
+purposes: {
+    externalLink: {
+        iconType: 'classes',
+    },
 
-document: {
-    iconType: 'classes',
-},
+    document: {
+        iconType: 'classes',
+    },
 
-mailTo: {
-    iconType: 'classes',
-},
+    mailTo: {
+        iconType: 'classes',
+    },
 
-newWindow: {
-    iconType: 'classes',
-},
+    newWindow: {
+        iconType: 'classes',
+    },
+}
 ```
 
-You can override some or all of the default icons at the same time using the "iconClasses" key:
+You can then provide your own classes for any of these using the "iconClasses" key:
 ```
-mailTo: {
-    iconType: 'classes',
-    iconClasses: ['fa-regular','fa-face-smile'],
-},
+purposes: {
+    externalLink: {
+        iconType: 'classes',
+        iconClasses: ['fa-regular','fa-face-smile'],
+    },
+    // et cetera 
+}
 ```
 
 ### Using image files
 Switch the iconType to SRC and provide your image's source URL:
+
 ```
-external: {
-    iconType: 'src',
-    iconSRC: '/example/theme/folder/new-window.png',
-},
+purposes: {
+    externalLink: {
+        iconType: 'src',
+        iconSRC: '/example/theme/folder/new-window.png',
+    },
 
-document: {
-    iconType: 'src',
-    iconSRC: '/example/theme/folder/document.png',
-},
+    document: {
+        iconType: 'src',
+        iconSRC: '/example/theme/folder/document.png',
+    },
 
-mailTo: {
-    iconType: 'src',
-    iconSRC: '/example/theme/folder/mailto.png',
-},
+    mailTo: {
+        iconType: 'src',
+        iconSRC: '/example/theme/folder/mailto.png',
+    },
 
-newWindow: {
-    iconType: 'src',
-    iconSRC: '/example/theme/folder/new-window.png',
-},
+    newWindow: {
+        iconType: 'src',
+        iconSRC: '/example/theme/folder/new-window.png',
+    },
+}
 ```
+
+
 ### Using inline SVG
 This is the default icon type, so you just need to provide the SVG you want overridden. E.g.:
 ```
-document: {
+purposes: {
+    document: {
             iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M360-240h240q17 0 28.5-11.5T640-280q0-17-11.5-28.5T600-320H360q-17 0-28.5 11.5T320-280q0 17 11.5 28.5T360-240Zm0-160h240q17 0 28.5-11.5T640-440q0-17-11.5-28.5T600-480H360q-17 0-28.5 11.5T320-440q0 17 11.5 28.5T360-400ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v447q0 33-23.5 56.5T720-80H240Zm280-560v-160H240v640h480v-440H560q-17 0-28.5-11.5T520-640ZM240-800v200-200 640-640Z"/></svg>',
+    }
 }
 ```
 
 ## Translating and/or overriding the text provided to screen readers
 Each of the four marked link types has a default hidden text provided to screen readers. Each can be overriden.
 ```
-mailto: {
-    message: '(Correo electrónico)',
-},
+purposes: {
+    mailto: {
+        message: '(Correo electrónico)',
+    },
+}
 ```
 
 ## Controlling which links get marked
@@ -141,8 +185,29 @@ shadowComponents: 'example-component-1, .example-component-2',
 ### Disabling a link category
 Maybe you do not want to mark external links at all, only documents, emails and new windows. Each of the four can be disabled independently by negating its selector:
 ```
-newWindow: {
-    selector: false,
+purposes: {
+    newWindow: {
+        selector: false,
+    }
+}
+```
+
+### Adding a link category
+This is a bit more work, because you need to provide all the keys the base library looks for. 
+
+Here's an example that adds a type for spreadsheets, and assigns it to the FontAwesome Excel icon class:
+```
+purposes: {
+    spreadsheet: {
+          selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
+          message: '(Link downloads spreadsheet)',
+          linkClass: 'link-purpose-spreadsheet',
+          iconWrapperClass: 'link-purpose-spreadsheet-icon',
+          iconType: 'classes',
+          iconHTML: false,
+          iconSRC: false,
+          iconClasses: ['fa-regular', 'fa-file-excel'],
+        },
 }
 ```
 
@@ -161,13 +226,21 @@ Default selectors are provided for links (`a[href]`), as well as what links are 
 
 Any of these selectors can be overridden if you want to mark more (or less). e.g.:
 ```
-base: {
-    selector: 'a[href], custom-link-tag[href]'
+baseSelector: {
+
+    selector: 'a[href], custom-link-tag[href]',
+
 }
-document: {
-    selector: '[href$=\'.pdf\'], [href*=\'.latex?\']',
-}
-mailto: {
-    selector: '[href^="mailto:"], [data-action-mail-to]',
+
+purposes: {
+
+    document: {
+        selector: '[href$=\'.pdf\'], [href*=\'.latex?\']',
+    }
+
+    mailto: {
+        selector: '[href^="mailto:"], [data-action-mail-to]',
+    }
+
 }
 ```
