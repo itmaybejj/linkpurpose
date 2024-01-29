@@ -28,21 +28,10 @@ class LinkPurpose {
       // Selector for links to examine.
       baseSelector: 'a[href]',
 
-      // Default selectors.
-      /*
-                To disable a group, set selector to a false boolean, e.g.:
-                options.externalLink.selector = false,
-            */
-
-      // Defaults for all marked links
-      allPurposes: {
-        // Class applied to all matched links.
-        linkClass: 'link-purpose',
-        // Class applied to inner span.
-        iconWrapperClass: 'link-purpose-icon',
-        // Class applied to span containing last word in link.
-        noBreakClass: 'link-purpose-nobreak'
-      },
+      // Classes for all matched links
+      baseLinkClass: 'link-purpose',
+      baseIconWrapperClass: 'link-purpose-icon',
+      noBreakClass: 'link-purpose-nobreak',
 
       purposes: {
         externalLink: {
@@ -85,7 +74,7 @@ class LinkPurpose {
           linkClass: 'link-purpose-window',
           iconWrapperClass: 'link-purpose-window-icon',
           iconType: 'html',
-          iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h200q17 0 28.5 11.5T440-800q0 17-11.5 28.5T400-760H200v560h560v-200q0-17 11.5-28.5T800-440q17 0 28.5 11.5T840-400v200q0 33-23.5 56.5T760-120H200Zm440-520h-80q-17 0-28.5-11.5T520-680q0-17 11.5-28.5T560-720h80v-80q0-17 11.5-28.5T680-840q17 0 28.5 11.5T720-800v80h80q17 0 28.5 11.5T840-680q0 17-11.5 28.5T800-640h-80v80q0 17-11.5 28.5T680-520q-17 0-28.5-11.5T640-560v-80Z"/></svg>',
+          iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm640-480L501-453q-5 3-10.5 4.5T480-447q-5 0-10.5-1.5T459-453L160-640v400h640v-400ZM480-520l320-200H160l320 200ZM160-640v10-59 1-32 32-.5 58.5-10 400-400Z"/></svg>',
           iconURL: false,
           iconClasses: ['fa-regular', 'fa-window-restore'] // set iconType to classes to use
         }
@@ -104,14 +93,30 @@ class LinkPurpose {
 
     init(() => {
       // Runs once on load
+
+      // Shallow merge
       LinkPurpose.options = {
         ...defaultOptions,
         ...option
       };
+      // Deep merge
+      if ('purposes' in option) {
+        for (const property in defaultOptions.purposes) {
+          if (property in option.purposes) {
+            LinkPurpose.options.purposes[property] = {
+              ...defaultOptions.purposes[property],
+              ...option.purposes[property]
+            }
+          } else {
+            LinkPurpose.options.purposes[property] = defaultOptions.purposes[property];
+          }
+        }
+      }
+      console.log(LinkPurpose.options);
       LinkPurpose.links = [];
       LinkPurpose.sortedLinks = [];
       // Convert the container ignore user option to a CSS :not selector.
-      LinkPurpose.ignore = LinkPurpose.options.ignore ? `:not(${LinkPurpose.options.ignore}, ${LinkPurpose.options.allPurposes.linkClass})` : `:not(${LinkPurpose.options.allPurposes.linkClass})`;
+      LinkPurpose.ignore = LinkPurpose.options.ignore ? `:not(${LinkPurpose.options.ignore}, ${LinkPurpose.options.baseLinkClass})` : `:not(${LinkPurpose.options.baseLinkClass})`;
       if (LinkPurpose.options.purposes.externalLink.selector) {
         if (LinkPurpose.options.domain) {
           LinkPurpose.options.purposes.externalLink.selector = `:not(${LinkPurpose.options.purposes.externalLink.selector}, ${LinkPurpose.options.domain}})`;
@@ -210,9 +215,7 @@ class LinkPurpose {
 
       LinkPurpose.marks.forEach((mark) => {
         mark.hits.forEach((hit, i) => {
-          mark.link.classList.add(LinkPurpose.options.allPurposes.linkClass, LinkPurpose.options.purposes[hit].linkClass)
-
-          console.log(hit)
+          mark.link.classList.add(LinkPurpose.options.baseLinkClass, LinkPurpose.options.purposes[hit].linkClass)
 
           if (i === 0) {
             // Wrap last word in link into a nobreak span.
@@ -243,7 +246,7 @@ class LinkPurpose {
               if (lastWord !== null) {
                 // Wrap the last word in a span.
                 const breakPreventer = document.createElement('span')
-                breakPreventer.classList.add(LinkPurpose.options.allPurposes.noBreakClass)
+                breakPreventer.classList.add(LinkPurpose.options.noBreakClass)
                 breakPreventer.textContent = lastWord[0]
                 if (trailingWhitespace) {
                   breakPreventer.append(trailingWhitespace.textContent)
@@ -257,18 +260,18 @@ class LinkPurpose {
             }
 
             const iconSpan = document.createElement('span')
-            iconSpan.classList.add(LinkPurpose.options.allPurposes.iconWrapperClass, LinkPurpose.options.purposes[hit].iconWrapperClass)
+            iconSpan.classList.add(LinkPurpose.options.baseIconWrapperClass, LinkPurpose.options.purposes[hit].iconWrapperClass)
             // TODO 'classes'
             if (LinkPurpose.options.purposes[hit].iconType === 'html') {
               iconSpan.innerHTML = LinkPurpose.options.purposes[hit].iconHTML
             } else if (LinkPurpose.options.purposes[hit].iconType === 'classes') {
-              console.log('classes!')
               LinkPurpose.options.purposes[hit].iconClasses.forEach((cls) => {
                 iconSpan.classList.add(cls)
               })
             } else if (LinkPurpose.options.purposes[hit].iconType === 'src') {
               const image = document.createElement('img')
-              image.setAttribute('src', LinkPurpose.options.purposes[hit].iconSRC)
+              image.setAttribute('src', LinkPurpose.options.purposes[hit].iconSRC);
+              iconSpan.append(image);
             }
             const iconText = document.createElement('span')
             iconText.classList.add('link-purpose-text')

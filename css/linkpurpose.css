@@ -11,7 +11,8 @@
     text-indent: 1em;
     vertical-align: middle;
 }
-.link-purpose-icon svg {
+
+.link-purpose-icon svg, .link-purpose-icon img {
     width: .875em;
     height: .875em;
     margin: -1px 1em 0 -1em;
