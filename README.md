@@ -274,6 +274,7 @@ This is the *entire* default option set. Override any of these as suggested abov
 
 And remember that *your* options array should only contain the keys you want overridden. For most sites, that is just the domain and what type of icon you want to use.
 
+```
 <script>
 
     const linkPurpose = new LinkPurpose({
@@ -353,3 +354,4 @@ And remember that *your* options array should only contain the keys you want ove
     })
 
 </script>
+```
