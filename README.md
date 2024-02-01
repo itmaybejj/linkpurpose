@@ -141,30 +141,30 @@ purposes: {
 ```
 
 ### Custom icons via URLs of image files
-Switch the iconType to SRC and provide your image's source URL:
+Switch the iconType to classes, and provide your icons **via CSS pseudoelements or background images, rather than JavaScript.** 
+
+E.g.:
 
 ```
-purposes: {
-    externalLink: {
-        iconType: 'src',
-        iconSRC: '/example/theme/folder/new-window.png',
-    },
-
-    document: {
-        iconType: 'src',
-        iconSRC: '/example/theme/folder/document.png',
-    },
-
-    mailTo: {
-        iconType: 'src',
-        iconSRC: '/example/theme/folder/mailto.png',
-    },
-
-    newWindow: {
-        iconType: 'src',
-        iconSRC: '/example/theme/folder/new-window.png',
-    },
+.link-purpose-icon {
+  background-size: .75em .75em;
+  background-repeat: no-repeat;
 }
+
+.link-purpose-icon:hover::before,
+.link-purpose-icon:focus::before, {
+  filter: hue-rotate(180deg);
+}
+
+.link-purpose-window-icon {
+  background-image: url("/my-images-folder/my-newWindow-icon.svg");
+}
+.link-purpose-mailto-icon {
+  background-image: url("/my-images-folder/my-envelope-icon.svg");
+}
+
+/* etc... */
+
 ```
 
 &nbsp;
@@ -313,7 +313,6 @@ And remember that *your* options array should only contain the keys you want ove
           iconType: 'html', // html, src or classes
           // Google Material Icons 3.x
           iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h240q17 0 28.5 11.5T480-800q0 17-11.5 28.5T440-760H200v560h560v-240q0-17 11.5-28.5T800-480q17 0 28.5 11.5T840-440v240q0 33-23.5 56.5T760-120H200Zm560-584L416-360q-11 11-28 11t-28-11q-11-11-11-28t11-28l344-344H600q-17 0-28.5-11.5T560-800q0-17 11.5-28.5T600-840h240v240q0 17-11.5 28.5T800-560q-17 0-28.5-11.5T760-600v-104Z"/></svg>',
-          iconSRC: false,
           iconClasses: ['fa-solid', 'fa-up-right-from-square'] // set iconType to classes to use
         },
 
@@ -324,7 +323,6 @@ And remember that *your* options array should only contain the keys you want ove
           iconWrapperClass: 'link-purpose-document-icon',
           iconType: 'html',
           iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M360-240h240q17 0 28.5-11.5T640-280q0-17-11.5-28.5T600-320H360q-17 0-28.5 11.5T320-280q0 17 11.5 28.5T360-240Zm0-160h240q17 0 28.5-11.5T640-440q0-17-11.5-28.5T600-480H360q-17 0-28.5 11.5T320-440q0 17 11.5 28.5T360-400ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v447q0 33-23.5 56.5T720-80H240Zm280-560v-160H240v640h480v-440H560q-17 0-28.5-11.5T520-640ZM240-800v200-200 640-640Z"/></svg>',
-          iconSRC: false,
           iconClasses: ['fa-regular', 'fa-file-lines'] // set iconType to classes to use
         },
 
@@ -335,7 +333,6 @@ And remember that *your* options array should only contain the keys you want ove
           iconWrapperClass: 'link-purpose-mail-icon',
           iconType: 'html',
           iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v400h640v-400L480-440Zm0-80 320-200H160l320 200ZM160-640v-80 480-400Z"/></svg>',
-          iconURL: false,
           iconClasses: ['fa-regular', 'fa-envelope'] // set iconType to classes to use
         },
 
@@ -346,7 +343,6 @@ And remember that *your* options array should only contain the keys you want ove
           iconWrapperClass: 'link-purpose-window-icon',
           iconType: 'html',
           iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h200q17 0 28.5 11.5T440-800q0 17-11.5 28.5T400-760H200v560h560v-200q0-17 11.5-28.5T800-440q17 0 28.5 11.5T840-400v200q0 33-23.5 56.5T760-120H200Zm440-520h-80q-17 0-28.5-11.5T520-680q0-17 11.5-28.5T560-720h80v-80q0-17 11.5-28.5T680-840q17 0 28.5 11.5T720-800v80h80q17 0 28.5 11.5T840-680q0 17-11.5 28.5T800-640h-80v80q0 17-11.5 28.5T680-520q-17 0-28.5-11.5T640-560v-80Z"/></svg>',
-          iconURL: false,
           iconClasses: ['fa-regular', 'fa-window-restore'] // set iconType to classes to use
         }
       }
