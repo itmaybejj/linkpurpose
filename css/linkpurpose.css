@@ -1,29 +1,29 @@
 .link-purpose-nobreak {
     white-space: nowrap;
 }
-
 .link-purpose-icon {
-    margin-left: .125em;
-    width: 1em;
+    width: .917em;
     height: 1em;
+    margin: 1px .25em -1px .25em;
     display: inline-block;
-    overflow: hidden;
-    text-indent: 1em;
-    vertical-align: middle;
+    font-size: .75em;
 }
-
-.link-purpose-icon svg, .link-purpose-icon img {
-    width: .875em;
-    height: .875em;
-    margin: -1px 1em 0 -1em;
-    vertical-align: top;
+.link-purpose-mail-icon {
+    width: 1em;
 }
-.link-purpose-mail-icon svg {
-    margin-top: 0;
+.link-purpose-icon svg {
+    max-width: 100%;
+    max-height: 100%;
 }
-
 .link-purpose-icon.svg-inline--fa {
-  margin-top: -.25rem;
-  height: .8125em;
+  margin: 0 .25em;
 }
-
+.link-purpose-text {
+    clip: rect(0 0 0 0); 
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap; 
+    width: 1px;
+}
