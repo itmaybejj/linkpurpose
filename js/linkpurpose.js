@@ -307,6 +307,8 @@ class LinkPurpose {
                 })
               }
               spanTarget.insertAdjacentElement(LinkPurpose.options.purposes[hit].iconPosition, iconSpan);
+            } else {
+              mark.link.classList.add(LinkPurpose.options.baseLinkClass)
             }
 
             const iconText = document.createElement('span')
