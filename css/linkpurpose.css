@@ -4,12 +4,22 @@
 .link-purpose-icon {
     width: .917em;
     height: 1em;
-    margin: 1px .25em -1px .25em;
+    margin: 0 .25em;
     display: inline-block;
     font-size: .75em;
 }
-.link-purpose-mail-icon {
+.link-purpose-icon.svg-inline--fa {
+    vertical-align: initial;
+}
+.linkpurpose-default-svg {
+    transform: translateY(.0625em);
+}
+.link-purpose-mail-icon .linkpurpose-default-svg {
     width: 1em;
+    transform: translateY(.133em);
+}
+.link-purpose-document-icon .linkpurpose-default-svg {
+    transform: none;
 }
 .link-purpose-icon svg {
     max-width: 100%;

@@ -193,9 +193,14 @@ Maybe you only want to mark links in the content area and footer...so provide yo
 roots: '.example-content-area, #example-footer',
 ```
 
-Maybe the content area contains a widget with its own icons. Skip that by defining a CSS :not() selector for links you want ignored:
+Maybe an area visually conveys that links are external, so you only need the screen reader hint, not the icon: 
 ```
-ignore: ':not(.example-widget a, #example-footer nav a, .example-ok-link)',
+hideIcon: '.fancycard a, .in-the-news a'
+```
+
+Maybe an area has links that are obviously external even to screen readers. Skip that by defining a CSS :not() selector for links you want ignored:
+```
+ignore: ':not(.purchase-links a, .external-resources a)',
 ```
 
 Or maybe the content area contains some shadow DOM / Web components, and you want the library to check within them:
@@ -281,11 +286,18 @@ And remember that *your* options array should only contain the keys you want ove
         
       domain: false, // your site's internal domain https://mysite.example
 
+      // Watch page for dynamic content
+      watch: true,
+
+
       // Only check within these containers, e.g. "#main, footer."
       roots: 'body',
 
       // Shadow components inside the root to check within, e.g., 'accordion, spa-content'
       shadowComponents: false,
+
+      // For these links, only provide the screen reader help text. e.g. '.in-the-news a'
+      hideIcon: '',
 
       // :not() based selector to ignore.
       // Identify links directly, e.g. ":not(header a, footer a, .my-ok-link)".
@@ -303,16 +315,18 @@ And remember that *your* options array should only contain the keys you want ove
       baseLinkClass: 'link-purpose',
       baseIconWrapperClass: 'link-purpose-icon',
       noBreakClass: 'link-purpose-nobreak',
+      hiddenTextClass: false,
 
       purposes: {
-        externalLink: {
-          selector: '[href^=\'/\'], [href^=\'.\'], [href^=\'#\']', // Inverted; these are relative URLs.
+        external: {
+          selector: '[href*="://"], [href^="//"]', // Inverted; these are relative URLs.
+          additionalSelector: false,
           message: '(Link is external)',
           linkClass: 'link-purpose-external',
           iconWrapperClass: 'link-purpose-external-icon',
           iconType: 'html', // html, src or classes
-          // Google Material Icons 3.x
-          iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h240q17 0 28.5 11.5T480-800q0 17-11.5 28.5T440-760H200v560h560v-240q0-17 11.5-28.5T800-480q17 0 28.5 11.5T840-440v240q0 33-23.5 56.5T760-120H200Zm560-584L416-360q-11 11-28 11t-28-11q-11-11-11-28t11-28l344-344H600q-17 0-28.5-11.5T560-800q0-17 11.5-28.5T600-840h240v240q0 17-11.5 28.5T800-560q-17 0-28.5-11.5T760-600v-104Z"/></svg>',
+          iconPosition: 'beforeend',
+          iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg>',
           iconClasses: ['fa-solid', 'fa-up-right-from-square'] // set iconType to classes to use
         },
 
@@ -322,27 +336,41 @@ And remember that *your* options array should only contain the keys you want ove
           linkClass: 'link-purpose-document',
           iconWrapperClass: 'link-purpose-document-icon',
           iconType: 'html',
-          iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M360-240h240q17 0 28.5-11.5T640-280q0-17-11.5-28.5T600-320H360q-17 0-28.5 11.5T320-280q0 17 11.5 28.5T360-240Zm0-160h240q17 0 28.5-11.5T640-440q0-17-11.5-28.5T600-480H360q-17 0-28.5 11.5T320-440q0 17 11.5 28.5T360-400ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v447q0 33-23.5 56.5T720-80H240Zm280-560v-160H240v640h480v-440H560q-17 0-28.5-11.5T520-640ZM240-800v200-200 640-640Z"/></svg>',
+          iconPosition: 'beforeend',
+          iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="14" height="14" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M64 464c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16H224v80c0 17.7 14.3 32 32 32h80V448c0 8.8-7.2 16-16 16H64zM64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V154.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0H64zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24H264c13.3 0 24-10.7 24-24s-10.7-24-24-24H120zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24H264c13.3 0 24-10.7 24-24s-10.7-24-24-24H120z"/></svg>',
           iconClasses: ['fa-regular', 'fa-file-lines'] // set iconType to classes to use
         },
 
-        mailTo: {
+        mail: {
           selector: '[href^="mailto:"]',
           message: '(Link sends Email)',
           linkClass: 'link-purpose-mailto',
           iconWrapperClass: 'link-purpose-mail-icon',
           iconType: 'html',
-          iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm320-280L160-640v400h640v-400L480-440Zm0-80 320-200H160l320 200ZM160-640v-80 480-400Z"/></svg>',
+          iconPosition: 'beforeend',
+          iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></svg>',
           iconClasses: ['fa-regular', 'fa-envelope'] // set iconType to classes to use
+        },
+
+        tel: {
+          selector: '[href^="tel:"]',
+          message: '(Link opens phone)',
+          linkClass: 'link-purpose-tel',
+          iconWrapperClass: 'link-purpose-tel-icon',
+          iconType: 'html',
+          iconPosition: 'beforeend',
+          iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="14" height="14" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm90.7 96.7c9.7-2.6 19.9 2.3 23.7 11.6l20 48c3.4 8.2 1 17.6-5.8 23.2L168 231.7c16.6 35.2 45.1 63.7 80.3 80.3l20.2-24.7c5.6-6.8 15-9.2 23.2-5.8l48 20c9.3 3.9 14.2 14 11.6 23.7l-12 44C336.9 378 329 384 320 384C196.3 384 96 283.7 96 160c0-9 6-16.9 14.7-19.3l44-12z"/></svg>',
+          iconClasses: ['fa-solid', 'fa-square-phone'] // set iconType to classes to use
         },
 
         newWindow: {
           selector: '[target="_blank"]',
-          message: '(Link opens in new window)',
+          message: '(New window)',
           linkClass: 'link-purpose-window',
           iconWrapperClass: 'link-purpose-window-icon',
           iconType: 'html',
-          iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h200q17 0 28.5 11.5T440-800q0 17-11.5 28.5T400-760H200v560h560v-200q0-17 11.5-28.5T800-440q17 0 28.5 11.5T840-400v200q0 33-23.5 56.5T760-120H200Zm440-520h-80q-17 0-28.5-11.5T520-680q0-17 11.5-28.5T560-720h80v-80q0-17 11.5-28.5T680-840q17 0 28.5 11.5T720-800v80h80q17 0 28.5 11.5T840-680q0 17-11.5 28.5T800-640h-80v80q0 17-11.5 28.5T680-520q-17 0-28.5-11.5T640-560v-80Z"/></svg>',
+          iconPosition: 'beforeend',
+          iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M432 48H208c-17.7 0-32 14.3-32 32V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V336h16c17.7 0 32-14.3 32-32V80c0-17.7-14.3-32-32-32zM48 448c0 8.8 7.2 16 16 16H320c8.8 0 16-7.2 16-16V256H48V448zM64 128H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></svg>',
           iconClasses: ['fa-regular', 'fa-window-restore'] // set iconType to classes to use
         }
       }
