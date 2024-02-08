@@ -227,6 +227,7 @@ purposes: {
     spreadsheet: {
           selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
           message: '(Link downloads spreadsheet)',
+          priority: 50,
           linkClass: 'link-purpose-spreadsheet',
           iconWrapperClass: 'link-purpose-spreadsheet-icon',
           iconType: 'classes',
@@ -286,9 +287,7 @@ And remember that *your* options array should only contain the keys you want ove
         
       domain: false, // your site's internal domain https://mysite.example
 
-      // Watch page for dynamic content
       watch: true,
-
 
       // Only check within these containers, e.g. "#main, footer."
       roots: 'body',
@@ -312,7 +311,7 @@ And remember that *your* options array should only contain the keys you want ove
       baseSelector: 'a[href]',
 
       // Classes for all matched links
-      baseLinkClass: 'link-purpose',
+      baseLinkClass: 'link-purpose', // A class must be provided to prevent recursion
       baseIconWrapperClass: 'link-purpose-icon',
       noBreakClass: 'link-purpose-nobreak',
       hiddenTextClass: false,
@@ -322,6 +321,7 @@ And remember that *your* options array should only contain the keys you want ove
           selector: '[href*="://"], [href^="//"]', // Inverted; these are relative URLs.
           additionalSelector: false,
           message: '(Link is external)',
+          priority: 10, // Higher numbers "win," e.g. for external documents
           linkClass: 'link-purpose-external',
           iconWrapperClass: 'link-purpose-external-icon',
           iconType: 'html', // html, src or classes
@@ -333,6 +333,7 @@ And remember that *your* options array should only contain the keys you want ove
         document: {
           selector: '[href$=\'.pdf\'], [href*=\'.pdf?\'], [href$=\'.doc\'], [href$=\'.docx\'], [href*=\'.doc?\'], [href*=\'.docx?\'], [href$=\'.ppt\'], [href$=\'.pptx\'], [href*=\'.ppt?\'], [href*=\'.pptx?\'], [href^=\'https://docs.google\']',
           message: '(Link opens document)',
+          priority: 50, // External documents get document icon.
           linkClass: 'link-purpose-document',
           iconWrapperClass: 'link-purpose-document-icon',
           iconType: 'html',
@@ -344,6 +345,7 @@ And remember that *your* options array should only contain the keys you want ove
         mail: {
           selector: '[href^="mailto:"]',
           message: '(Link sends Email)',
+          priority: 100, // Protocol queries always win.
           linkClass: 'link-purpose-mailto',
           iconWrapperClass: 'link-purpose-mail-icon',
           iconType: 'html',
@@ -355,6 +357,7 @@ And remember that *your* options array should only contain the keys you want ove
         tel: {
           selector: '[href^="tel:"]',
           message: '(Link opens phone)',
+          priority: 100,
           linkClass: 'link-purpose-tel',
           iconWrapperClass: 'link-purpose-tel-icon',
           iconType: 'html',
@@ -366,6 +369,7 @@ And remember that *your* options array should only contain the keys you want ove
         newWindow: {
           selector: '[target="_blank"]',
           message: '(New window)',
+          priority: 0,
           linkClass: 'link-purpose-window',
           iconWrapperClass: 'link-purpose-window-icon',
           iconType: 'html',
