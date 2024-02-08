@@ -45,6 +45,7 @@ class LinkPurpose {
           selector: '[href*="://"], [href^="//"]', // Inverted; these are relative URLs.
           additionalSelector: false,
           message: '(Link is external)',
+          priority: 10, // Higher numbers "win," e.g. for external documents
           linkClass: 'link-purpose-external',
           iconWrapperClass: 'link-purpose-external-icon',
           iconType: 'html', // html, src or classes
@@ -56,6 +57,7 @@ class LinkPurpose {
         document: {
           selector: '[href$=\'.pdf\'], [href*=\'.pdf?\'], [href$=\'.doc\'], [href$=\'.docx\'], [href*=\'.doc?\'], [href*=\'.docx?\'], [href$=\'.ppt\'], [href$=\'.pptx\'], [href*=\'.ppt?\'], [href*=\'.pptx?\'], [href^=\'https://docs.google\']',
           message: '(Link opens document)',
+          priority: 50, // External documents get document icon.
           linkClass: 'link-purpose-document',
           iconWrapperClass: 'link-purpose-document-icon',
           iconType: 'html',
@@ -67,6 +69,7 @@ class LinkPurpose {
         mail: {
           selector: '[href^="mailto:"]',
           message: '(Link sends Email)',
+          priority: 100, // Protocol queries always win.
           linkClass: 'link-purpose-mailto',
           iconWrapperClass: 'link-purpose-mail-icon',
           iconType: 'html',
@@ -78,6 +81,7 @@ class LinkPurpose {
         tel: {
           selector: '[href^="tel:"]',
           message: '(Link opens phone)',
+          priority: 100,
           linkClass: 'link-purpose-tel',
           iconWrapperClass: 'link-purpose-tel-icon',
           iconType: 'html',
@@ -89,6 +93,7 @@ class LinkPurpose {
         newWindow: {
           selector: '[target="_blank"]',
           message: '(New window)',
+          priority: 0,
           linkClass: 'link-purpose-window',
           iconWrapperClass: 'link-purpose-window-icon',
           iconType: 'html',
@@ -124,6 +129,10 @@ class LinkPurpose {
             LinkPurpose.options.purposes[property] = {
               ...defaultOptions.purposes[property],
               ...option.purposes[property]
+            }
+            // Set default priority once to save if statements later.
+            if (property in LinkPurpose.options.purposes && !('priority' in LinkPurpose.options.purposes[property])) {
+              LinkPurpose.options.purposes[property].priority = 50;
             }
           } else {
             LinkPurpose.options.purposes[property] = defaultOptions.purposes[property];
@@ -223,8 +232,13 @@ class LinkPurpose {
             // Add new window last, so other icon "wins."
             if (key === 'newWindow') {
               newWindow = true;
-            } else {
+            } else if (hits.length === 0) {
               hits.push(key)
+            } else {
+              // Protocol beats document beats external
+              if (value.priority > LinkPurpose.options.purposes[hits[0]].priority) {
+                hits[0] = key;
+              }
             }
           }
         }
