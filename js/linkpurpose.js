@@ -246,7 +246,7 @@ class LinkPurpose {
               })
             } else {
               // Protocol beats document beats external
-              if (value.priority > LinkPurpose.options.purposes[hits[0]].priority) {
+              if (value.priority > LinkPurpose.options.purposes[hits[0].type].priority) {
                 hits[0] = {
                   type: key,
                   noReferrer: key === 'external' && LinkPurpose.options.noReferrer
