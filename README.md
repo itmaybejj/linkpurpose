@@ -311,10 +311,13 @@ And remember that *your* options array should only contain the keys you want ove
       baseSelector: 'a[href]',
 
       // Classes for all matched links
-      baseLinkClass: 'link-purpose', // A class must be provided to prevent recursion
+      baseLinkClass: 'link-purpose', // A unique class MUST be provided to prevent recursion
       baseIconWrapperClass: 'link-purpose-icon',
       noBreakClass: 'link-purpose-nobreak',
       hiddenTextClass: false,
+
+      // Mask headers when users click out to external links
+      noReferrer: false,
 
       purposes: {
         external: {

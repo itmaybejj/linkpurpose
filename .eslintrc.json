@@ -1,11 +1,11 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2018": true
     },
     "extends": "standard",
     "parserOptions": {
-        "ecmaVersion": "latest"
+        "ecmaVersion": 2018
     },
     "rules": {
     }

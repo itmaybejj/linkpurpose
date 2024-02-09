@@ -35,10 +35,13 @@ class LinkPurpose {
       baseSelector: 'a[href]',
 
       // Classes for all matched links
-      baseLinkClass: 'link-purpose', // A class must be provided to prevent recursion
+      baseLinkClass: 'link-purpose', // A unique class MUST be provided to prevent recursion
       baseIconWrapperClass: 'link-purpose-icon',
       noBreakClass: 'link-purpose-nobreak',
       hiddenTextClass: false,
+
+      // Mask headers when users click out to external links
+      noReferrer: false,
 
       purposes: {
         external: {
@@ -203,7 +206,11 @@ class LinkPurpose {
         for (let index = LinkPurpose.links.length - 1; index >= 0; index--) {
           if (LinkPurpose.links[index].matches(LinkPurpose.options.shadowComponents)) {
             // Dive into the shadow root and collect an array of its results.
-            const inners = LinkPurpose.links[index].shadowRoot?.querySelectorAll(subSelector)
+            let inners;
+            // todo test...
+            if (LinkPurpose.links[index].shadowRoot) {
+              inners = LinkPurpose.links[index].shadowRoot.querySelectorAll(subSelector)
+            }
             if (typeof (inners) === 'object' && inners.length > 0) {
               // Replace shadow host with inner elements.
               LinkPurpose.links.splice(index, 1, ...inners)
@@ -233,17 +240,26 @@ class LinkPurpose {
             if (key === 'newWindow') {
               newWindow = true;
             } else if (hits.length === 0) {
-              hits.push(key)
+              hits.push({
+                type: key,
+                noReferrer: key === 'external' && LinkPurpose.options.noReferrer
+              })
             } else {
               // Protocol beats document beats external
               if (value.priority > LinkPurpose.options.purposes[hits[0]].priority) {
-                hits[0] = key;
+                hits[0] = {
+                  type: key,
+                  noReferrer: key === 'external' && LinkPurpose.options.noReferrer
+                };
               }
             }
           }
         }
         if (newWindow) {
-          hits.push('newWindow');
+          hits.push({
+            type: 'newWindow',
+            noReferrer: false
+          });
         }
         if (hits.length !== 0) {
           const showIcon = !(LinkPurpose.options.hideIcon && link.matches(LinkPurpose.options.hideIcon));
@@ -266,10 +282,14 @@ class LinkPurpose {
           if (i === 0) {
             let spanTarget = mark.link
 
-            if (mark.showIcon) {
-              mark.link.classList.add(LinkPurpose.options.baseLinkClass, LinkPurpose.options.purposes[hit].linkClass)
+            if (hit.noReferrer) {
+              mark.link.setAttribute('rel', 'noreferrer')
+            }
 
-              if (LinkPurpose.options.purposes[hit].iconPosition === 'beforeend') {
+            if (mark.showIcon) {
+              mark.link.classList.add(LinkPurpose.options.baseLinkClass, LinkPurpose.options.purposes[hit.type].linkClass)
+
+              if (LinkPurpose.options.purposes[hit.type].iconPosition === 'beforeend') {
                 // Wrap last word in link into a nobreak span.
                 let lastTextNode = mark.link.lastChild
                 let trailingWhitespace = false
@@ -311,16 +331,16 @@ class LinkPurpose {
               }
 
               const iconSpan = document.createElement('span')
-              iconSpan.classList.add(LinkPurpose.options.baseIconWrapperClass, LinkPurpose.options.purposes[hit].iconWrapperClass)
+              iconSpan.classList.add(LinkPurpose.options.baseIconWrapperClass, LinkPurpose.options.purposes[hit.type].iconWrapperClass)
               // TODO 'classes'
-              if (LinkPurpose.options.purposes[hit].iconType === 'html') {
-                iconSpan.innerHTML = LinkPurpose.options.purposes[hit].iconHTML
-              } else if (LinkPurpose.options.purposes[hit].iconType === 'classes') {
-                LinkPurpose.options.purposes[hit].iconClasses.forEach((cls) => {
+              if (LinkPurpose.options.purposes[hit.type].iconType === 'html') {
+                iconSpan.innerHTML = LinkPurpose.options.purposes[hit.type].iconHTML
+              } else if (LinkPurpose.options.purposes[hit.type].iconType === 'classes') {
+                LinkPurpose.options.purposes[hit.type].iconClasses.forEach((cls) => {
                   iconSpan.classList.add(cls)
                 })
               }
-              spanTarget.insertAdjacentElement(LinkPurpose.options.purposes[hit].iconPosition, iconSpan);
+              spanTarget.insertAdjacentElement(LinkPurpose.options.purposes[hit.type].iconPosition, iconSpan);
             } else {
               mark.link.classList.add(LinkPurpose.options.baseLinkClass)
             }
@@ -330,12 +350,12 @@ class LinkPurpose {
             if (LinkPurpose.options.hiddenTextClass) {
               iconText.classList.add(LinkPurpose.options.hiddenTextClass);
             }
-            iconText.textContent = LinkPurpose.options.purposes[hit].message;
+            iconText.textContent = LinkPurpose.options.purposes[hit.type].message;
             spanTarget.append(iconText);
           } else {
             const iconText = mark.link.querySelector('.link-purpose-text')
-            iconText.classList.add(LinkPurpose.options.purposes[hit].iconWrapperClass)
-            iconText.textContent = iconText.textContent + LinkPurpose.options.purposes[hit].message
+            iconText.classList.add(LinkPurpose.options.purposes[hit.type].iconWrapperClass)
+            iconText.textContent = iconText.textContent + LinkPurpose.options.purposes[hit.type].message
           }
         })
       })
