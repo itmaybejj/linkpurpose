@@ -10,6 +10,9 @@ Link Purpose is a lightweight vanilla JS library that finds and marks links that
 * <a href="https://github.com/itmaybejj/linkpurpose">External and non-http protocol links</a>
 * <a href="/" target="_blank">Opening a new window</a>
 
+**<a href="https://itmaybejj.github.io/linkpurpose/">View this page with the script running to see the icons</a>**...
+
+
 Each category is optional, and custom categories and icons can be defined in config.
 
 ### Why JS?

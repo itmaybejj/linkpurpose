@@ -451,11 +451,11 @@ header {
     width: 100%;
   }
 }
-</style></div>
- <script src="{{ site.baseurl}}/dist/linkpurpose.min.js"></script>
-    <script>
-        const linkPurpose = new LinkPurpose({
-            //
-            });
-    </script>
+</style>
+ <script src="{{ site.baseurl}}/js/linkpurpose.min.js"></script>
+  <script>
+      const linkPurpose = new LinkPurpose({
+          //
+          });
+  </script>
 </div>
