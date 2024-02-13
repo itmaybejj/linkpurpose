@@ -453,6 +453,7 @@ header {
 }
 </style>
  <script src="{{ site.baseurl}}/js/linkpurpose.min.js"></script>
+ <link rel="stylesheet" href="/linkpurpose/css/linkpurpose.css">
   <script>
       const linkPurpose = new LinkPurpose({
           //

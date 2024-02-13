@@ -164,10 +164,6 @@ class LinkPurpose {
       }
 
       LinkPurpose.run()
-
-      if (LinkPurpose.options.watch) {
-        LinkPurpose.startObserver()
-      }
     })
 
     // QuerySelectAll non-ignored elements within roots, with recursion into shadow components
@@ -193,6 +189,11 @@ class LinkPurpose {
       const roots = document.querySelectorAll(LinkPurpose.options.roots);
       if (!roots) {
         return
+      } else if (LinkPurpose.options.watch && !LinkPurpose.options.watching) {
+        roots.forEach(root => {
+          LinkPurpose.startObserver(root);
+        })
+        LinkPurpose.options.watching = true;
       }
 
       roots.forEach(root => {
@@ -367,7 +368,7 @@ class LinkPurpose {
       LinkPurpose.markLinks()
     }
 
-    LinkPurpose.startObserver = function () {
+    LinkPurpose.startObserver = function (root) {
       /*
     Set up mutation observer for added nodes.
     */
@@ -383,11 +384,9 @@ class LinkPurpose {
       }
 
       LinkPurpose.mutated = debounce(() => {
+        console.log('mutation');
         LinkPurpose.run();
       }, 500);
-
-      // Select the node that will be observed for mutations
-      const targetNode = document.querySelector('main');
 
       // Options for the observer (which mutations to observe)
       const config = { childList: true, subtree: true };
@@ -404,7 +403,7 @@ class LinkPurpose {
       // Create an observer instance linked to the callback function
       const observer = new MutationObserver(callback);
       // Start observing the target node for configured mutations
-      observer.observe(targetNode, config);
+      observer.observe(root, config);
     }
   }
 }
