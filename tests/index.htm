@@ -50,6 +50,17 @@
             </ul>
         </section>
 
+        <section id="download">
+            <ul>
+                <li>
+                    <a href="/" download>Download</a>
+                </li>
+                <li>
+                    <a href="http://www.princeton.edu" download target="_blank">Download from external in new window link</a>
+                </li>
+            </ul>
+        </section>
+
 
 
 
@@ -57,7 +68,22 @@
         <script>
           const linkPurpose = new LinkPurpose({
           
-            noReferrer: true
+            noReferrer: true,
+            purposes: {
+                spreadsheet: {
+                    priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
+                    selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
+                    message: '(Link downloads spreadsheet)', // Hidden text for screen readers
+                    linkClass: 'link-purpose-spreadsheet', // Goes on link
+                    iconWrapperClass: 'link-purpose-spreadsheet-icon', // Goes on span around icon            
+                    iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
+                    iconType: 'classes', // Apply classes to a span to create link
+                    iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
+                },
+                external: {
+                    newWindow: true
+                }
+            }
             
           });
 

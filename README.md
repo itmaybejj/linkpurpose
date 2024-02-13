@@ -4,8 +4,8 @@
 
 Link Purpose is a lightweight vanilla JS library that finds and marks links that introduce a change of context:
 
-* <a href="mailto://comments@whitehouse.gov">Opening an email client</a>
-* <a href="tel://555-555-5555">Making a telephone call</a>
+* <a href="mailto:comments@whitehouse.gov">Opening an email client</a>
+* <a href="tel:555-555-5555">Making a telephone call</a>
 * <a href="https://www.irs.gov/pub/irs-pdf/f1040.pdf">Downloading a document</a>
 * <a href="https://github.com/itmaybejj/linkpurpose">External and non-http protocol links</a>
 * <a href="/" target="_blank">Opening a new window</a>
@@ -18,7 +18,7 @@ Each category is optional, and custom categories and icons can be defined in con
 ### Why JS?
 Much of this *can* be done with fancy CSS, e.g. 
 ```
-a[href^="mailto://"]::after {
+a[href^="mailto:"]::after {
   content: "(Link sends email)";
   // etc
 }
@@ -243,21 +243,20 @@ purposes: {
 ```
 
 ### Adding a link category
-This is a bit more work, because you need to provide all the keys the base library looks for. 
+This is a bit more work, because you must provide ALL the keys the base library looks for, or the library well error out.
 
 Here's an example that adds a type for spreadsheets, and assigns it to the FontAwesome Excel icon class:
 ```
 purposes: {
     spreadsheet: {
+          priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
           selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
-          message: '(Link downloads spreadsheet)',
-          priority: 50,
-          linkClass: 'link-purpose-spreadsheet',
-          iconWrapperClass: 'link-purpose-spreadsheet-icon',
-          iconType: 'classes',
-          iconHTML: false,
-          iconSRC: false,
-          iconClasses: ['fa-regular', 'fa-file-excel'],
+          message: '(Link downloads spreadsheet)', // Hidden text for screen readers
+          linkClass: 'link-purpose-spreadsheet', // Goes on link
+          iconWrapperClass: 'link-purpose-spreadsheet-icon', // Goes on span around icon
+          iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
+          iconType: 'classes', // Apply classes to a span to create link
+          iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
         },
 }
 ```
@@ -322,8 +321,7 @@ And remember that *your* options array should only contain the keys you want ove
       // For these links, only provide the screen reader help text. e.g. '.in-the-news a'
       hideIcon: '',
 
-      // :not() based selector to ignore.
-      // Identify links directly, e.g. ":not(header a, footer a, .my-ok-link)".
+      // Identify links directly, e.g. "header a, footer a, .my-ok-link".
       // If this is not a valid selector, no links will be flagged.
       ignore: '',
 
@@ -348,6 +346,7 @@ And remember that *your* options array should only contain the keys you want ove
           selector: '[href*="://"], [href^="//"]', // Inverted; these are relative URLs.
           additionalSelector: false,
           message: '(Link is external)',
+          newWindow: false, // Opens external links in new window
           priority: 10, // Higher numbers "win," e.g. for external documents
           linkClass: 'link-purpose-external',
           iconWrapperClass: 'link-purpose-external-icon',
