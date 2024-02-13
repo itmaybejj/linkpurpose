@@ -24,6 +24,7 @@
 .link-purpose-icon svg {
     width: 100%;
     height: 100%;
+    vertical-align: initial;
 }
 .link-purpose-icon.svg-inline--fa {
   margin: 0 .25em;

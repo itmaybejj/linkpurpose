@@ -5,7 +5,7 @@ class LinkPurpose {
   // ESLint config
 
   constructor (option) {
-    LinkPurpose.version = 'dev'
+    LinkPurpose.version = '1.0.0'
 
     const defaultOptions = {
 
