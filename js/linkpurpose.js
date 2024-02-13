@@ -384,7 +384,6 @@ class LinkPurpose {
       }
 
       LinkPurpose.mutated = debounce(() => {
-        console.log('mutation');
         LinkPurpose.run();
       }, 500);
 
