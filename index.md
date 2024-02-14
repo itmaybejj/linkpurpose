@@ -2,8 +2,8 @@
 
 Link Purpose is a lightweight vanilla JS library that finds and marks links that introduce a change of context:
 
-* <a href="mailto://comments@whitehouse.gov">Opening an email client</a>
-* <a href="tel://555-555-5555">Making a telephone call</a>
+* <a href="mailto:comments@whitehouse.gov">Opening an email client</a>
+* <a href="tel:555-555-5555">Making a telephone call</a>
 * <a href="https://www.irs.gov/pub/irs-pdf/f1040.pdf">Downloading a document</a>
 * <a href="https://github.com/itmaybejj/linkpurpose">External and non-http protocol links</a>
 * <a href="/" target="_blank">Opening a new window</a>
@@ -13,7 +13,7 @@ Each category is optional, and custom categories and icons can be defined in con
 ### Why JS?
 Much of this *can* be done with fancy CSS, e.g. 
 ```
-a[href^="mailto://"]::after {
+a[href^="mailto:"]::after {
   content: "(Link sends email)";
   // etc
 }
