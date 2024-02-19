@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTag, HtmlUnknownTarget -->
 <html lang="en">
     <head>
+        <title>Testing base library</title>
         <meta charset="utf-8">
         <link rel="stylesheet" media="all" href="../css/linkpurpose.css">
         <script src="../js/linkpurpose.js"></script>
@@ -34,7 +36,7 @@
                     <a href="/example.pdf">PDF link</a>
                 </li>
                 <li>
-                    <a href="/exampl.pdf" target="_blank">PDF new window link</a>
+                    <a href="/example.pdf" target="_blank">PDF new window link</a>
                 </li>
             </ul>
         </section>
@@ -56,7 +58,7 @@
                     <a href="/" download>Download</a>
                 </li>
                 <li>
-                    <a href="http://www.princeton.edu" download target="_blank">Download from external in new window link</a>
+                    <a href="https://www.princeton.edu" download target="_blank">Download from external in new window link</a>
                 </li>
             </ul>
         </section>
@@ -65,27 +67,31 @@
 
 
         <!-- Instantiate-->
+        <!--suppress JSUnusedGlobalSymbols -->
         <script>
-          const linkPurpose = new LinkPurpose({
-          
-            noReferrer: true,
-            purposes: {
+
+          if (CSS.supports('selector(:is(body))')) {
+            const linkPurpose = new LinkPurpose({
+
+              noReferrer: true,
+              purposes: {
                 spreadsheet: {
-                    priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
-                    selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
-                    message: '(Link downloads spreadsheet)', // Hidden text for screen readers
-                    linkClass: 'link-purpose-spreadsheet', // Goes on link
-                    iconWrapperClass: 'link-purpose-spreadsheet-icon', // Goes on span around icon            
-                    iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
-                    iconType: 'classes', // Apply classes to a span to create link
-                    iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
+                  priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
+                  selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
+                  message: '(Link downloads spreadsheet)', // Hidden text for screen readers
+                  linkClass: 'link-purpose-spreadsheet', // Goes on link
+                  iconWrapperClass: 'link-purpose-spreadsheet-icon', // Goes on span around icon
+                  iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
+                  iconType: 'classes', // Apply classes to a span to create link
+                  iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
                 },
                 external: {
-                    newWindow: true
+                  newWindow: true
                 }
-            }
-            
-          });
+              }
+          })
+
+          };
 
         </script>
 

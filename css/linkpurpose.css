@@ -2,10 +2,10 @@
     white-space: nowrap;
 }
 .link-purpose-icon {
+    display: inline-block;
     width: .917em;
     height: 1em;
     margin: 0 .25em;
-    display: inline-block;
     font-size: .75em;
 }
 .link-purpose-icon.svg-inline--fa {
@@ -30,11 +30,11 @@
   margin: 0 .25em;
 }
 .link-purpose-text {
-    clip: rect(0 0 0 0); 
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
     position: absolute;
-    white-space: nowrap; 
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    overflow: hidden;
     width: 1px;
+    height: 1px;
+    white-space: nowrap;
 }

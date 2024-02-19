@@ -335,6 +335,7 @@ class LinkPurpose {
                     breakPreventer.textContent = lastWord[0]
                     if (trailingWhitespace) {
                       breakPreventer.append(trailingWhitespace.textContent)
+                      // noinspection JSPrimitiveTypeWrapperUsage
                       trailingWhitespace.textContent = ''
                     }
                     lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
@@ -408,7 +409,7 @@ class LinkPurpose {
       const config = { childList: true, subtree: true };
 
       // Create an observer instance linked to the callback function
-      const callback = (mutationList, observer) => {
+      const callback = (mutationList) => {
         for (const mutation of mutationList) {
           if (mutation.type === 'childList' && mutation.addedNodes.length) {
             LinkPurpose.mutated();

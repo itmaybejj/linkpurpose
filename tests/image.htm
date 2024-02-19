@@ -1,7 +1,9 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTag, HtmlUnknownTarget, SpellCheckingInspection -->
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <title>Testing with image reference</title>
         <link rel="stylesheet" media="all" href="../css/linkpurpose.css">
     </head>
 <body>
@@ -33,7 +35,7 @@
                     <a href="/example.pdf">PDF link</a>
                 </li>
                 <li>
-                    <a href="/exampl.pdf" target="_blank">PDF new window link</a>
+                    <a href="/example.pdf" target="_blank">PDF new window link</a>
                 </li>
             </ul>
         </section>
@@ -49,23 +51,23 @@
             </ul>
         </section>
 
-        </section>
-
-
 
         <script src="../js/linkpurpose.js"></script>
         <!-- Instantiate-->
+        <!--suppress JSUnusedGlobalSymbols -->
         <script>
-          const linkPurpose = new LinkPurpose({
-          
-            purposes: {
-                document: {
-                    iconType: 'src',
-                    iconSRC: 'download_FILL0_wght400_GRAD0_opsz24.svg',
-                    },
-            },
-            
-          });
+          if (CSS.supports('selector(:is(body))')) {
+              const linkPurpose = new LinkPurpose({
+
+                purposes: {
+                    document: {
+                        iconType: 'src',
+                        iconSRC: 'download_FILL0_wght400_GRAD0_opsz24.svg',
+                        },
+                },
+
+              });
+          }
 
           /*let inject = document.querySelector('#all-tests');
           for (const [key, value] of Object.entries(Ed11y.M)) {

@@ -1,7 +1,9 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTag, HtmlUnknownTag, HtmlUnknownTarget, JSUnresolvedLibraryURL -->
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <title>Testing with FontAwesome enabled</title>
         <link rel="stylesheet" media="all" href="../css/linkpurpose.css">
         <script src="https://kit.fontawesome.com/c8feb6767b.js" crossorigin="anonymous"></script>
     </head>
@@ -34,7 +36,7 @@
                     <a href="/example.pdf">PDF link</a>
                 </li>
                 <li>
-                    <a href="/exampl.pdf" target="_blank">PDF new window link</a>
+                    <a href="/example.pdf" target="_blank">PDF new window link</a>
                 </li>
             </ul>
         </section>
@@ -44,7 +46,7 @@
                     <a href="/example.xls">Spreadsheet (custom test)</a>
                 </li>
                 <li>
-                    <a href="/exampl.xls" target="_blank">Spreadsheet new window link</a>
+                    <a href="/example.xls" target="_blank">Spreadsheet new window link</a>
                 </li>
             </ul>
         </section>
@@ -59,43 +61,46 @@
 
         <script src="../js/linkpurpose.js"></script>
         <!-- Instantiate-->
+        <!--suppress JSUnusedGlobalSymbols -->
         <script>
-          const linkPurpose = new LinkPurpose({
-          
-            purposes: {
+          if (CSS.supports('selector(:is(body))')) {
+            const linkPurpose = new LinkPurpose({
+
+              purposes: {
                 spreadsheet: {
-                    priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
-                    selector: '[href$=".xls"], [href$=".xlsx"], [href*=".xls?"], [href*=".xlsx?"], [href^="https://docs.google.com/spreadsheets/"]',
-                    message: '(Link downloads spreadsheet)', // Hidden text for screen readers
-                    linkClass: 'link-purpose-spreadsheet', // Goes on link
-                    iconPosition: 'beforeend',
-                    iconWrapperClass: 'link-purpose-spreadsheet-icon', // Goes on span around icon
-                    iconType: 'classes', // Apply classes to a span to create link
-                    iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
+                  priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
+                  selector: '[href$=".xls"], [href$=".xlsx"], [href*=".xls?"], [href*=".xlsx?"], [href^="https://docs.google.com/spreadsheets/"]',
+                  message: '(Link downloads spreadsheet)', // Hidden text for screen readers
+                  linkClass: 'link-purpose-spreadsheet', // Goes on link
+                  iconPosition: 'beforeend',
+                  iconWrapperClass: 'link-purpose-spreadsheet-icon', // Goes on span around icon
+                  iconType: 'classes', // Apply classes to a span to create link
+                  iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
                 },
                 externalLink: {
-                    iconType: 'classes', // html, src or classes
-                    iconClasses: ['fa-solid', 'fa-up-right-from-square'], // set iconType to classes to use
+                  iconType: 'classes', // html, src or classes
+                  iconClasses: ['fa-solid', 'fa-up-right-from-square'], // set iconType to classes to use
                 },
 
                 document: {
-                    iconType: 'classes',
-                    iconClasses: ['fa-regular', 'fa-file-lines'], // set iconType to classes to use
+                  iconType: 'classes',
+                  iconClasses: ['fa-regular', 'fa-file-lines'], // set iconType to classes to use
                 },
 
                 mailTo: {
-                    iconType: 'classes',
-                    iconClasses: ['fa-regular', 'fa-envelope'],
+                  iconType: 'classes',
+                  iconClasses: ['fa-regular', 'fa-envelope'],
                 },
 
                 newWindow: {
-                    iconType: 'classes',
-                    iconClasses: ['fa-regular', 'fa-window-restore'],
+                  iconType: 'classes',
+                  iconClasses: ['fa-regular', 'fa-window-restore'],
                 },
-            }
-            
-            
-          });
+              }
+
+
+            });
+          }
 
           /*let inject = document.querySelector('#all-tests');
           for (const [key, value] of Object.entries(Ed11y.M)) {
