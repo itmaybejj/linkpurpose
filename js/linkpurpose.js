@@ -256,18 +256,17 @@ class LinkPurpose {
             if (key === 'newWindow') {
               newWindow = true;
             } else if (hits.length === 0) {
+              // No existing hit.
               hits.push({
                 type: key,
                 noReferrer: key === 'external' && LinkPurpose.options.noReferrer
               })
-            } else {
-              // Protocol beats document beats external
-              if (value.priority > LinkPurpose.options.purposes[hits[0].type].priority) {
-                hits[0] = {
-                  type: key,
-                  noReferrer: key === 'external' && LinkPurpose.options.noReferrer
-                };
-              }
+            } else if (value.priority > LinkPurpose.options.purposes[hits[0].type].priority) {
+              // New hit is higher priority than existing hit.
+              hits[0] = {
+                type: key,
+                noReferrer: key === 'external' && LinkPurpose.options.noReferrer
+              };
             }
           }
         }
