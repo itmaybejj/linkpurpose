@@ -123,12 +123,15 @@ class LinkPurpose {
 
     }
 
-    // Immediate if after load
+    // Wait for DOM completion.
     const init = (callback) => {
-      if (document.readyState === 'complete') {
-        callback();
+      if (document.readyState === 'loading') {
+        document.onreadystatechange = () => {
+          // Anything after loading is fine.
+          callback();
+        };
       } else {
-        window.addEventListener('load', callback);
+        callback();
       }
     }
 
@@ -204,12 +207,21 @@ class LinkPurpose {
       const roots = document.querySelectorAll(LinkPurpose.options.roots);
       if (!roots) {
         return
-      } else if (LinkPurpose.options.watch && !LinkPurpose.options.watching) {
-        roots.forEach(root => {
-          LinkPurpose.startObserver(root);
-        })
-        LinkPurpose.options.watching = true;
       }
+      if (document.readyState === 'interactive') {
+        document.onreadystatechange = () => {
+          // Wait to set up observers until after document is complete
+          LinkPurpose.run();
+        };
+      } else {
+        if (!!roots && LinkPurpose.options.watch && !LinkPurpose.options.watching) {
+          roots.forEach(root => {
+            LinkPurpose.startObserver(root);
+          })
+          LinkPurpose.options.watching = true;
+        }
+      }
+
 
       roots.forEach(root => {
         LinkPurpose.links = LinkPurpose.links.concat(Array.from(root.querySelectorAll(selector)));
