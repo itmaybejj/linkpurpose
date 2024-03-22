@@ -5,18 +5,20 @@
     display: inline-block;
     width: .917em;
     height: 1em;
-    margin: 0 .25em;
+    margin: 0 min(.25em, 4px);
     font-size: .75em;
+    max-width: 15px;
+    max-height: 16px;
 }
 .link-purpose-icon.svg-inline--fa {
     vertical-align: initial;
 }
 .linkpurpose-default-svg {
-    transform: translateY(.0625em);
+    transform: translateY(1px);
 }
 .link-purpose-mail-icon .linkpurpose-default-svg {
     width: 1em;
-    transform: translateY(.133em);
+    transform: translateY(2px);
 }
 .link-purpose-document-icon .linkpurpose-default-svg {
     transform: none;
@@ -27,7 +29,7 @@
     vertical-align: initial;
 }
 .link-purpose-icon.svg-inline--fa {
-  margin: 0 .25em;
+  margin: 0 min(.25em, 4px);
 }
 .link-purpose-text {
     position: absolute;
@@ -37,4 +39,7 @@
     width: 1px;
     height: 1px;
     white-space: nowrap;
+}
+img + .link-purpose-icon, figure + .link-purpose-icon {
+    display: none;
 }

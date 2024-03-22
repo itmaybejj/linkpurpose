@@ -36,7 +36,27 @@
                     <a href="/example.pdf">PDF link</a>
                 </li>
                 <li>
+                    <a href="/example.pdf" download="">PDF download</a>
+                </li>
+                <li>
                     <a href="/example.pdf" target="_blank">PDF new window link</a>
+                </li>
+            </ul>
+        </section>
+
+        <section id="protocol">
+            <ul>
+                <li>
+                    <a href="javascript:">JS Href</a>
+                </li>
+                <li>
+                    <a href="Zoom://" target="_blank">App protocol link</a>
+                </li>
+                <li>
+                    <a href="/?http%3A%2F%2F">Link with encoded http://</a>
+                </li>
+                <li>
+                    <a href="/?foo=https://"><strong>Invalid</strong> link with ?foo=https:// </a>
                 </li>
             </ul>
         </section>
@@ -99,6 +119,19 @@
             a:hover {
                 color: wheat;
                 background-color: brown;
+            }
+            .link-purpose::before {
+                font-family: sans-serif;
+                font-size: 12px;
+                margin: 0 .25rem;
+                font-style: italic;
+                color: black;
+            }
+            .link-purpose-protocol::before {
+                content: "(Protocol)";
+            }
+            .link-purpose-external::before {
+                content: "(External)";
             }
         </style>
     </main>

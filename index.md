@@ -6,7 +6,8 @@ Link Purpose is a lightweight vanilla JS library that finds and marks links that
 * <a href="tel:555-555-5555">Making a telephone call</a>
 * <a href="https://www.irs.gov/pub/irs-pdf/f1040.pdf">Opening a document</a>
 * <a href="https://github.com/itmaybejj/linkpurpose/archive/refs/heads/main.zip" download>Downloading a file</a>
-* <a href="https://github.com/itmaybejj/linkpurpose">External and non-http protocol links</a>
+* <a href="https://github.com/itmaybejj/linkpurpose">External links</a>
+* <a href="slack://open">Links that directly open apps</a>
 * <a href="/" target="_blank">Opening a new window</a>
 
 Each category is optional, and custom categories and icons can be defined in config.
@@ -347,7 +348,7 @@ And remember that *your* options array should only contain the keys you want ove
 
       purposes: {
         // These are listed in priority order
-
+    
         newWindow: {
           priority: 0, // Higher numbers "win," e.g. external documents in new window will be marked as documents
           selector: '[target="_blank"]', // Which <a> tags will be marked
@@ -359,7 +360,7 @@ And remember that *your* options array should only contain the keys you want ove
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M432 48H208c-17.7 0-32 14.3-32 32V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V336h16c17.7 0 32-14.3 32-32V80c0-17.7-14.3-32-32-32zM48 448c0 8.8 7.2 16 16 16H320c8.8 0 16-7.2 16-16V256H48V448zM64 128H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></svg>',
           iconClasses: ['fa-regular', 'fa-window-restore'] // Goes on icon span only if iconType is "classes"
         },
-
+    
         external: {
           priority: 10,
           selector: '[href*="://"], [href^="//"]', // This will be INVERTED; for external these are the relative URLs.
@@ -373,7 +374,7 @@ And remember that *your* options array should only contain the keys you want ove
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg>',
           iconClasses: ['fa-solid', 'fa-up-right-from-square']
         },
-
+    
         download: {
           priority: 20,
           selector: '[download]',
@@ -385,7 +386,7 @@ And remember that *your* options array should only contain the keys you want ove
           iconHTML: '<svg class="linkpurpose-default-svg" aria-hidden="true" width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>',
           iconClasses: ['fa-solid', 'fa-download'] // set iconType to classes to use
         },
-
+    
         document: {
           priority: 50,
           selector: '[href$=\'.pdf\'], [href*=\'.pdf?\'], [href$=\'.doc\'], [href$=\'.docx\'], [href*=\'.doc?\'], [href*=\'.docx?\'], [href$=\'.ppt\'], [href$=\'.pptx\'], [href*=\'.ppt?\'], [href*=\'.pptx?\'], [href^=\'https://docs.google\']',
@@ -398,8 +399,23 @@ And remember that *your* options array should only contain the keys you want ove
           iconClasses: ['fa-regular', 'fa-file-lines'] // set iconType to classes to use
         },
 
+        // Ref www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+        app: {
+          priority: 90,
+          selector: ':is([href*="://"]):not([href^="http"], [href^="file"])',
+          additionalSelector: false,
+          newWindow: false,
+          message: '(Link opens app)',
+          linkClass: 'link-purpose-app',
+          iconWrapperClass: 'link-purpose-app-icon',
+          iconType: 'html',
+          iconPosition: 'beforeend',
+          iconHTML: '<svg class="linkpurpose-default-svg" aria-hidden="true" width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M432 64H208c-8.8 0-16 7.2-16 16V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V320h16c8.8 0 16-7.2 16-16V80c0-8.8-7.2-16-16-16zM0 192c0-35.3 28.7-64 64-64H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192zm64 32c0 17.7 14.3 32 32 32H288c17.7 0 32-14.3 32-32s-14.3-32-32-32H96c-17.7 0-32 14.3-32 32z"/></svg>',
+          iconClasses: ['fa-solid', 'fa-window-restore']
+        },
+
         mail: {
-          priority: 100, // Protocol queries win by default.
+          priority: 100, // Known protocol queries win by default.
           selector: '[href^="mailto:"]',
           message: '(Link sends Email)',
           linkClass: 'link-purpose-mailto',

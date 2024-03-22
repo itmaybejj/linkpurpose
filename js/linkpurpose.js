@@ -49,7 +49,7 @@ class LinkPurpose {
         newWindow: {
           priority: 0, // Higher numbers "win," e.g. external documents in new window will be marked as documents
           selector: '[target="_blank"]', // Which <a> tags will be marked
-          message: '(New window)', // Hidden text for screen readers
+          message: '(Link opens in new window)', // Hidden text for screen readers
           linkClass: 'link-purpose-window', // Goes on link
           iconWrapperClass: 'link-purpose-window-icon', // Goes on span around icon
           iconType: 'html', // html, src or classes
@@ -60,10 +60,10 @@ class LinkPurpose {
 
         external: {
           priority: 10,
-          selector: '[href*="://"], [href^="//"]', // This will be INVERTED; for external these are the relative URLs.
+          selector: '[href*="https://"], [href^="http://"]', // Protocol prefixes to be tested against the domain.
           additionalSelector: false, // Links that should always match, e.g. '[href^="/redirect-to/"]'
           newWindow: false,
-          message: '(Link is external)',
+          message: '(External website)',
           linkClass: 'link-purpose-external',
           iconWrapperClass: 'link-purpose-external-icon',
           iconType: 'html',
@@ -87,7 +87,7 @@ class LinkPurpose {
         document: {
           priority: 50,
           selector: '[href$=\'.pdf\'], [href*=\'.pdf?\'], [href$=\'.doc\'], [href$=\'.docx\'], [href*=\'.doc?\'], [href*=\'.docx?\'], [href$=\'.ppt\'], [href$=\'.pptx\'], [href*=\'.ppt?\'], [href*=\'.pptx?\'], [href^=\'https://docs.google\']',
-          message: '(Link opens document)',
+          message: '(Opens document)',
           linkClass: 'link-purpose-document',
           iconWrapperClass: 'link-purpose-document-icon',
           iconType: 'html',
@@ -96,10 +96,25 @@ class LinkPurpose {
           iconClasses: ['fa-regular', 'fa-file-lines'] // set iconType to classes to use
         },
 
+        // Ref www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+        app: {
+          priority: 90, // Unknown protocols generally win.
+          selector: ':is([href*="://"]):not([href^="https:"], [href^="http:"], [href^="file:"])',
+          additionalSelector: false,
+          newWindow: false,
+          message: '(Link opens app)',
+          linkClass: 'link-purpose-app',
+          iconWrapperClass: 'link-purpose-app-icon',
+          iconType: 'html',
+          iconPosition: 'beforeend',
+          iconHTML: '<svg class="linkpurpose-default-svg" aria-hidden="true" width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M432 64H208c-8.8 0-16 7.2-16 16V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V320h16c8.8 0 16-7.2 16-16V80c0-8.8-7.2-16-16-16zM0 192c0-35.3 28.7-64 64-64H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192zm64 32c0 17.7 14.3 32 32 32H288c17.7 0 32-14.3 32-32s-14.3-32-32-32H96c-17.7 0-32 14.3-32 32z"/></svg>',
+          iconClasses: ['fa-solid', 'fa-window-restore']
+        },
+
         mail: {
-          priority: 100, // Protocol queries win by default.
+          priority: 100, // Known protocol queries always win.
           selector: '[href^="mailto:"]',
-          message: '(Link sends Email)',
+          message: '(Opens email app)',
           linkClass: 'link-purpose-mailto',
           iconWrapperClass: 'link-purpose-mail-icon',
           iconType: 'html',
@@ -109,9 +124,9 @@ class LinkPurpose {
         },
 
         tel: {
-          priority: 100,
+          priority: 100, // Known protocol queries always win.
           selector: '[href^="tel:"]',
-          message: '(Link opens phone)',
+          message: '(Opens phone app)',
           linkClass: 'link-purpose-tel',
           iconWrapperClass: 'link-purpose-tel-icon',
           iconType: 'html',
@@ -263,7 +278,10 @@ class LinkPurpose {
         const hits = [];
         let newWindow = false;
         for (const [key, value] of Object.entries(LinkPurpose.options.purposes)) {
-          if (value.selector && (link.matches(`${value.selector}`) || (value.additionalSelector && link.matches(`${value.additionalSelector}`)))) {
+          if (value.selector && (link.matches(value.selector) || (value.additionalSelector && link.matches(value.additionalSelector))))  {
+            // We have a hit.
+            //&& (!value.filter || link.matches(value.filter)
+
             // Add new window last, so other icon "wins."
             if (key === 'newWindow') {
               newWindow = true;

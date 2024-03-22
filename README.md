@@ -9,12 +9,14 @@ Link Purpose is a lightweight vanilla JS library that finds and marks links that
 * <a href="mailto:comments@whitehouse.gov">Opening an email client</a>
 * <a href="tel:555-555-5555">Making a telephone call</a>
 * <a href="https://www.irs.gov/pub/irs-pdf/f1040.pdf">Downloading a document</a>
-* <a href="https://github.com/itmaybejj/linkpurpose">External and non-http protocol links</a>
+* <a href="https://github.com/itmaybejj/linkpurpose">External links</a>
+* <a href="slack://open">Links that directly open apps</a>
 * <a href="https://github.com/itmaybejj/linkpurpose/archive/refs/heads/main.zip" download>Downloading a file</a>
 * <a href="/" target="_blank">Opening a new window</a>
 
+Each category is optional, and custom categories and icons can be defined in config. 
 
-Each category is optional, and custom categories and icons can be defined in config.
+Icons are visually hidden by default on links that contain an image, as these icons almost always need custom CSS for positioning.
 
 ### Why JS?
 Much of this *can* be done with fancy CSS, e.g. 
@@ -107,6 +109,20 @@ E.g., to set your own classes for all marked links, override any of the base cla
 ```
 
 You only have to list options you want to override; any "missing" keys will fall back to the defaults.
+
+### Showing icons on image links
+
+There's a line of CSS in the library that automatically hides the visual icon on links that contain an image.
+
+It often makes a great deal of sense to show an icon in these cases, but the positioning almost always requires some custom CSS.
+
+To show these icons, add this to your theme CSS:
+```css
+ img + .link-purpose-icon, figure + .link-purpose-icon {
+  display: initial;
+}
+```
+
 
 ### Custom icons via inline SVG
 This is the default icon type, so you just need to provide the SVG you want overridden. E.g.:
@@ -366,6 +382,23 @@ And remember that *your* options array should only contain the keys you want ove
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="14" height="14" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M64 464c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16H224v80c0 17.7 14.3 32 32 32h80V448c0 8.8-7.2 16-16 16H64zM64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V154.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0H64zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24H264c13.3 0 24-10.7 24-24s-10.7-24-24-24H120zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24H264c13.3 0 24-10.7 24-24s-10.7-24-24-24H120z"/></svg>',
           iconClasses: ['fa-regular', 'fa-file-lines'] // set iconType to classes to use
+        },
+
+
+
+        // Ref www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
+        app: {
+          priority: 90,
+          selector: ':is([href*="://"]):not([href^="http"], [href^="file"])',
+          additionalSelector: false,
+          newWindow: false,
+          message: '(Link opens app)',
+          linkClass: 'link-purpose-app',
+          iconWrapperClass: 'link-purpose-app-icon',
+          iconType: 'html',
+          iconPosition: 'beforeend',
+          iconHTML: '<svg class="linkpurpose-default-svg" aria-hidden="true" width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M432 64H208c-8.8 0-16 7.2-16 16V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V320h16c8.8 0 16-7.2 16-16V80c0-8.8-7.2-16-16-16zM0 192c0-35.3 28.7-64 64-64H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192zm64 32c0 17.7 14.3 32 32 32H288c17.7 0 32-14.3 32-32s-14.3-32-32-32H96c-17.7 0-32 14.3-32 32z"/></svg>',
+          iconClasses: ['fa-solid', 'fa-window-restore']
         },
 
         mail: {
