@@ -150,57 +150,8 @@ class LinkPurpose {
       }
     }
 
-    init(() => {
-      // Runs once on load
-
-      // Shallow merge
-      LinkPurpose.options = {
-        ...defaultOptions,
-        ...option
-      };
-      // Deep merge
-      if (typeof (option) === 'object' && 'purposes' in option) {
-        for (const property in defaultOptions.purposes) {
-          if (property in option.purposes) {
-            LinkPurpose.options.purposes[property] = {
-              ...defaultOptions.purposes[property],
-              ...option.purposes[property]
-            }
-            // Set default priority once to save if statements later.
-            if (property in LinkPurpose.options.purposes && !('priority' in LinkPurpose.options.purposes[property])) {
-              LinkPurpose.options.purposes[property].priority = 50;
-            }
-          } else {
-            LinkPurpose.options.purposes[property] = defaultOptions.purposes[property];
-          }
-        }
-      }
-
-      // Convert the container ignore user option to a CSS :not selector.
-      LinkPurpose.ignore = LinkPurpose.options.ignore ? `:not(${LinkPurpose.options.ignore}, .${LinkPurpose.options.baseLinkClass})` : `:not(.${LinkPurpose.options.baseLinkClass})`;
-      if (LinkPurpose.options.purposes.external.selector && LinkPurpose.options.domain) {
-        const domains = LinkPurpose.options.domain.split(',');
-        let domainNot = '';
-        domains.forEach((domain, i) => {
-          if (domain.indexOf('*') === 0) {
-            domainNot += `[href*="${LinkPurpose.options.domain.replace('*', '')}"]`
-          } else if (domain.indexOf('//') === -1) {
-            if (i > 0) {
-              domainNot += ', ';
-            }
-            domainNot += `[href*="https://${LinkPurpose.options.domain}"], [href*="http://${LinkPurpose.options.domain}"], [href^="//${LinkPurpose.options.domain}"]`;
-          } else {
-            domainNot += `[href*="${LinkPurpose.options.domain}"]`;
-          }
-        })
-        LinkPurpose.options.purposes.external.selector = `:is(${LinkPurpose.options.purposes.external.selector}):not(${domainNot})`;
-      }
-
-      LinkPurpose.run()
-    })
-
     // QuerySelectAll non-ignored elements within roots, with recursion into shadow components
-    LinkPurpose.findLinks = function () {
+    const findLinks = function () {
       LinkPurpose.links = []
 
       // Check for noRun element.
@@ -226,7 +177,7 @@ class LinkPurpose {
       if (document.readyState === 'interactive') {
         document.onreadystatechange = () => {
           // Wait to set up observers until after document is complete
-          LinkPurpose.run();
+          run();
         };
       } else {
         if (!!roots && LinkPurpose.options.watch && !LinkPurpose.options.watching) {
@@ -267,7 +218,7 @@ class LinkPurpose {
       }
     }
 
-    LinkPurpose.processLinks = function () {
+    const processLinks = function () {
       LinkPurpose.marks = []
 
       if (!LinkPurpose.links) {
@@ -316,7 +267,7 @@ class LinkPurpose {
       })
     }
 
-    LinkPurpose.markLinks = function () {
+    const markLinks = function () {
       if (!LinkPurpose.marks) {
         return
       }
@@ -410,11 +361,62 @@ class LinkPurpose {
       })
     }
 
-    LinkPurpose.run = () => {
-      LinkPurpose.findLinks()
-      LinkPurpose.processLinks()
-      LinkPurpose.markLinks()
+    const run = () => {
+      findLinks()
+      processLinks()
+      markLinks()
     }
+
+
+
+    init(() => {
+      // Runs once on load
+
+      // Shallow merge
+      LinkPurpose.options = {
+        ...defaultOptions,
+        ...option
+      };
+      // Deep merge
+      if (typeof (option) === 'object' && 'purposes' in option) {
+        for (const property in defaultOptions.purposes) {
+          if (property in option.purposes) {
+            LinkPurpose.options.purposes[property] = {
+              ...defaultOptions.purposes[property],
+              ...option.purposes[property]
+            }
+            // Set default priority once to save if statements later.
+            if (property in LinkPurpose.options.purposes && !('priority' in LinkPurpose.options.purposes[property])) {
+              LinkPurpose.options.purposes[property].priority = 50;
+            }
+          } else {
+            LinkPurpose.options.purposes[property] = defaultOptions.purposes[property];
+          }
+        }
+      }
+
+      // Convert the container ignore user option to a CSS :not selector.
+      LinkPurpose.ignore = LinkPurpose.options.ignore ? `:not(${LinkPurpose.options.ignore}, .${LinkPurpose.options.baseLinkClass})` : `:not(.${LinkPurpose.options.baseLinkClass})`;
+      if (LinkPurpose.options.purposes.external.selector && LinkPurpose.options.domain) {
+        const domains = LinkPurpose.options.domain.split(',');
+        let domainNot = '';
+        domains.forEach((domain, i) => {
+          if (domain.indexOf('*') === 0) {
+            domainNot += `[href*="${LinkPurpose.options.domain.replace('*', '')}"]`
+          } else if (domain.indexOf('//') === -1) {
+            if (i > 0) {
+              domainNot += ', ';
+            }
+            domainNot += `[href*="https://${LinkPurpose.options.domain}"], [href*="http://${LinkPurpose.options.domain}"], [href^="//${LinkPurpose.options.domain}"]`;
+          } else {
+            domainNot += `[href*="${LinkPurpose.options.domain}"]`;
+          }
+        })
+        LinkPurpose.options.purposes.external.selector = `:is(${LinkPurpose.options.purposes.external.selector}):not(${domainNot})`;
+      }
+
+      run()
+    })
 
     LinkPurpose.startObserver = function (root) {
       /*
@@ -432,7 +434,7 @@ class LinkPurpose {
       }
 
       LinkPurpose.mutated = debounce(() => {
-        LinkPurpose.run();
+        run();
       }, 500);
 
       // Options for the observer (which mutations to observe)
