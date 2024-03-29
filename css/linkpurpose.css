@@ -6,9 +6,9 @@
     width: .917em;
     height: 1em;
     margin: 0 min(.25em, 4px);
-    font-size: .75em;
     max-width: 15px;
     max-height: 16px;
+    font-size: .75em;
 }
 .link-purpose-icon.svg-inline--fa {
     vertical-align: initial;
