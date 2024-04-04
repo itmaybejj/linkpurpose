@@ -5,7 +5,9 @@ class LinkPurpose {
   // ESLint config
 
   constructor (option) {
-    LinkPurpose.version = '1.0.0'
+    LinkPurpose.version = '1.0.0';
+
+    let initiated = false;
 
     const defaultOptions = {
 
@@ -150,6 +152,45 @@ class LinkPurpose {
       }
     }
 
+
+    const startObserver = function (root) {
+      /*
+    Set up mutation observer for added nodes.
+    */
+      // hat tip https://www.joshwcomeau.com/snippets/javascript/debounce/
+      const debounce = (callback, wait) => {
+        let timeoutId = null;
+        return (...args) => {
+          window.clearTimeout(timeoutId);
+          timeoutId = window.setTimeout(() => {
+            callback.apply(null, args);
+          }, wait);
+        };
+      }
+
+      const mutated = debounce(() => {
+        run();
+
+      }, 500);
+
+      // Options for the observer (which mutations to observe)
+      const config = { childList: true, subtree: true };
+
+      // Create an observer instance linked to the callback function
+      const callback = (mutationList) => {
+        for (const mutation of mutationList) {
+          if (mutation.type === 'childList' && mutation.addedNodes.length) {
+            mutated();
+          }
+        }
+      };
+
+      // Create an observer instance linked to the callback function
+      const observer = new MutationObserver(callback);
+      // Start observing the target node for configured mutations
+      observer.observe(root, config);
+    }
+
     // QuerySelectAll non-ignored elements within roots, with recursion into shadow components
     const findLinks = function () {
       LinkPurpose.links = []
@@ -181,8 +222,11 @@ class LinkPurpose {
         };
       } else {
         if (!!roots && LinkPurpose.options.watch && !LinkPurpose.options.watching) {
+          if (!initiated) {
+            run();
+          }
           roots.forEach(root => {
-            LinkPurpose.startObserver(root);
+            startObserver(root);
           })
           LinkPurpose.options.watching = true;
         }
@@ -362,6 +406,7 @@ class LinkPurpose {
     }
 
     const run = () => {
+      initiated = true;
       findLinks()
       processLinks()
       markLinks()
@@ -418,41 +463,5 @@ class LinkPurpose {
       run()
     })
 
-    LinkPurpose.startObserver = function (root) {
-      /*
-    Set up mutation observer for added nodes.
-    */
-      // hat tip https://www.joshwcomeau.com/snippets/javascript/debounce/
-      const debounce = (callback, wait) => {
-        let timeoutId = null;
-        return (...args) => {
-          window.clearTimeout(timeoutId);
-          timeoutId = window.setTimeout(() => {
-            callback.apply(null, args);
-          }, wait);
-        };
-      }
-
-      LinkPurpose.mutated = debounce(() => {
-        run();
-      }, 500);
-
-      // Options for the observer (which mutations to observe)
-      const config = { childList: true, subtree: true };
-
-      // Create an observer instance linked to the callback function
-      const callback = (mutationList) => {
-        for (const mutation of mutationList) {
-          if (mutation.type === 'childList' && mutation.addedNodes.length) {
-            LinkPurpose.mutated();
-          }
-        }
-      };
-
-      // Create an observer instance linked to the callback function
-      const observer = new MutationObserver(callback);
-      // Start observing the target node for configured mutations
-      observer.observe(root, config);
-    }
   }
 }
