@@ -312,7 +312,7 @@ class LinkPurpose {
                     // Wrap the last word in a span.
                     const breakPreventer = document.createElement('span')
                     breakPreventer.classList.add(LinkPurpose.options.noBreakClass)
-                    breakPreventer.textContent = lastWord[0]
+                    breakPreventer.textContent = lastWord[0].trim()
                     if (trailingWhitespace) {
                       breakPreventer.append(trailingWhitespace.textContent)
                       // noinspection JSPrimitiveTypeWrapperUsage

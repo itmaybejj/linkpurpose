@@ -4,20 +4,18 @@
 .link-purpose-icon {
     display: inline-block;
     width: .917em;
-    height: 1em;
-    margin: 0 min(.25em, 4px);
-    max-width: 15px;
-    max-height: 16px;
+    height: .917em;
+    min-height: 9px;
+    margin: 0 .25em;
     font-size: .75em;
 }
 .link-purpose-icon.svg-inline--fa {
     vertical-align: initial;
 }
-.linkpurpose-default-svg {
-    transform: translateY(1px);
+.link-purpose-external-icon {
+    height: .875em;
 }
 .link-purpose-mail-icon .linkpurpose-default-svg {
-    width: 1em;
     transform: translateY(2px);
 }
 .link-purpose-document-icon .linkpurpose-default-svg {
@@ -29,7 +27,7 @@
     vertical-align: initial;
 }
 .link-purpose-icon.svg-inline--fa {
-  margin: 0 min(.25em, 4px);
+  margin: 0 .1875em;
 }
 .link-purpose-text {
     position: absolute;
@@ -40,6 +38,9 @@
     height: 1px;
     white-space: nowrap;
 }
-img + .link-purpose-icon, figure + .link-purpose-icon {
+img ~ .link-purpose-icon,
+figure ~ .link-purpose-icon,
+svg ~ .link-purpose-icon,
+a *:has(img, svg, figure) ~ :is(.link-purpose-nobreak, .link-purpose-icon) {
     display: none;
 }
