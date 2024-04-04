@@ -8,6 +8,8 @@ class LinkPurpose {
     LinkPurpose.version = '1.0.0';
 
     let initiated = false;
+    let checkLinks = [];
+    let marks = [];
 
     const defaultOptions = {
 
@@ -169,7 +171,7 @@ class LinkPurpose {
       }
 
       const mutated = debounce(() => {
-        run();
+        LinkPurpose.run();
 
       }, 500);
 
@@ -193,7 +195,7 @@ class LinkPurpose {
 
     // QuerySelectAll non-ignored elements within roots, with recursion into shadow components
     const findLinks = function () {
-      LinkPurpose.links = []
+      checkLinks = []
 
       // Check for noRun element.
       LinkPurpose.noRun = !!(LinkPurpose.options.noRunIfAbsent && document.querySelector(`:is(${LinkPurpose.options.noRunIfAbsent})`) === null)
@@ -218,12 +220,12 @@ class LinkPurpose {
       if (document.readyState === 'interactive') {
         document.onreadystatechange = () => {
           // Wait to set up observers until after document is complete
-          run();
+          LinkPurpose.run();
         };
       } else {
         if (!!roots && LinkPurpose.options.watch && !LinkPurpose.options.watching) {
           if (!initiated) {
-            run();
+            LinkPurpose.run();
           }
           roots.forEach(root => {
             startObserver(root);
@@ -234,28 +236,28 @@ class LinkPurpose {
 
 
       roots.forEach(root => {
-        LinkPurpose.links = LinkPurpose.links.concat(Array.from(root.querySelectorAll(selector)));
+        checkLinks = checkLinks.concat(Array.from(root.querySelectorAll(selector)));
       })
 
       // The initial search may be a mix of elements ('p') and placeholders for shadow hosts ('custom-p-element').
       // Repeat the search inside each placeholder, and replace the placeholder with its search results.
       if (LinkPurpose.options.shadowComponents) {
         const subSelector = `:is(${LinkPurpose.options.baseSelector})${LinkPurpose.options.ignore}`
-        for (let index = LinkPurpose.links.length - 1; index >= 0; index--) {
-          if (LinkPurpose.links[index].matches(LinkPurpose.options.shadowComponents)) {
+        for (let index = checkLinks.length - 1; index >= 0; index--) {
+          if (checkLinks[index].matches(LinkPurpose.options.shadowComponents)) {
             // Dive into the shadow root and collect an array of its results.
             let inners;
             // todo test...
-            if (LinkPurpose.links[index].shadowRoot) {
-              inners = LinkPurpose.links[index].shadowRoot.querySelectorAll(subSelector)
+            if (checkLinks[index].shadowRoot) {
+              inners = checkLinks[index].shadowRoot.querySelectorAll(subSelector)
             }
             if (typeof (inners) === 'object' && inners.length > 0) {
               // Replace shadow host with inner elements.
-              LinkPurpose.links.splice(index, 1, ...inners)
+              checkLinks.splice(index, 1, ...inners)
             } else {
               // Remove shadow host with no inner elements.
               console.warn('Link Purpose: A specified shadow host has no shadowRoot.')
-              LinkPurpose.links.splice(index, 1)
+              checkLinks.splice(index, 1)
             }
           }
         }
@@ -263,13 +265,13 @@ class LinkPurpose {
     }
 
     const processLinks = function () {
-      LinkPurpose.marks = []
+      marks = []
 
-      if (!LinkPurpose.links) {
+      if (!checkLinks) {
         return
       }
 
-      LinkPurpose.links.forEach(link => {
+      checkLinks.forEach(link => {
         const hits = [];
         let newWindow = false;
         for (const [key, value] of Object.entries(LinkPurpose.options.purposes)) {
@@ -302,7 +304,7 @@ class LinkPurpose {
         }
         if (hits.length !== 0) {
           const showIcon = !(LinkPurpose.options.hideIcon && link.matches(LinkPurpose.options.hideIcon));
-          LinkPurpose.marks.push({
+          marks.push({
             link: link,
             hits: hits,
             showIcon: showIcon
@@ -312,11 +314,11 @@ class LinkPurpose {
     }
 
     const markLinks = function () {
-      if (!LinkPurpose.marks) {
+      if (!marks) {
         return
       }
 
-      LinkPurpose.marks.forEach((mark) => {
+      marks.forEach((mark) => {
         mark.hits.forEach((hit, i) => {
           if (i === 0) {
             let spanTarget = mark.link
@@ -405,7 +407,7 @@ class LinkPurpose {
       })
     }
 
-    const run = () => {
+    LinkPurpose.run = () => {
       initiated = true;
       findLinks()
       processLinks()
@@ -460,7 +462,7 @@ class LinkPurpose {
         LinkPurpose.options.purposes.external.selector = `:is(${LinkPurpose.options.purposes.external.selector}):not(${domainNot})`;
       }
 
-      run()
+      LinkPurpose.run()
     })
 
   }
