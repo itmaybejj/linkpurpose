@@ -328,7 +328,7 @@ class LinkPurpose {
 
               const iconSpan = document.createElement('span')
               iconSpan.classList.add(LinkPurpose.options.baseIconWrapperClass, LinkPurpose.options.purposes[hit.type].iconWrapperClass)
-              iconSpan.setAttribute('aria-hidden', '');
+              iconSpan.setAttribute('aria-hidden', 'true');
               iconSpan.setAttribute('title', LinkPurpose.options.purposes[hit.type].message);
               if (LinkPurpose.options.purposes[hit.type].iconType === 'html') {
                 iconSpan.innerHTML = LinkPurpose.options.purposes[hit.type].iconHTML
