@@ -42,6 +42,7 @@
 .link-purpose-hide-on-image :is(img, figure, svg) ~ .link-purpose-icon,
 .link-purpose-hide-on-image :is(img, figure, svg) ~ .link-purpose-nobreak .link-purpose-icon,
 .link-purpose-hide-on-image *:has(img, svg, figure) ~ .link-purpose-icon,
-.link-purpose-hide-on-image *:has(img, svg, figure) ~ .link-purpose-nobreak .link-purpose-icon {
+.link-purpose-hide-on-image *:has(img, svg, figure) ~ .link-purpose-nobreak .link-purpose-icon,
+.link-purpose-text:empty {
     display: none;
 }
