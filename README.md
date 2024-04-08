@@ -4,7 +4,7 @@
 
 Link Purpose is a lightweight vanilla JS library that finds and marks links that introduce a change of context.
 
-** Note: you should <a href="https://itmaybejj.github.io/linkpurpose/">view this page with the script running</a> to see the icons**...
+**Note: you should <a href="https://itmaybejj.github.io/linkpurpose/">view this page with the script running</a> to see the icons**
 
 * <a href="mailto:comments@whitehouse.gov">Opening an email client</a>
 * <a href="tel:555-555-5555">Making a telephone call</a>
@@ -16,7 +16,7 @@ Link Purpose is a lightweight vanilla JS library that finds and marks links that
 
 Each category is optional, and custom categories and icons can be defined in config. 
 
-Icons are visually hidden by default on links that contain an image, as these icons almost always need custom CSS for positioning.
+Icons on links that contain an image can be visually hidden via CSS or the noIconOnImages parameter, as these icons almost always need custom CSS for positioning.
 
 ### Why JS?
 Much of this *can* be done with fancy CSS, e.g. 
@@ -28,9 +28,10 @@ a[href^="mailto:"]::after {
 
 But JS lets us do some fancy things:
 1. The last word of the link can be wrapped into a span with the icon, preventing line breaks between the text and the icon.
-2. Inline SVG can be used, taking advantage of CSS's currentColor property to follow the link text's color through hover and focus states, rather than needing to remember to override the icon color each time the link changes color.
-3. Visually hidden, *translatable* text can be provided. Automatic translations tend to miss text in CSS.
-4. Links inside Shadow DOM/Web components can be marked as well.
+2. Visually hidden, *translatable* alt text can be provided. Automatic translations tend to miss text in CSS.
+3. The visually hidden text can be hidden when it is redundant to the text of the link itself.
+4. Inline SVG can take advantage of CSS's currentColor property to automatically follow the link text's color through hover and focus states.
+5. Links inside Shadow DOM/Web components can be marked as well.
 
 
 ### Generated markup
@@ -330,11 +331,11 @@ purposes: {
 &nbsp;
 &nbsp;
 
-## Putting it all together
+## All available parameters
 
-This is the *entire* default option set. Override any of these as suggested above, or add additional Purposes.
+This is the *entire* default option set. Every single one of these is ***optional***. *Your* options object should only contain the keys you want overridden.
 
-And remember that *your* options array should only contain the keys you want overridden. For most sites, that is just the domain and what type of icon you want to use.
+For most sites, that is just the domain.
 
 ```html
 <script>

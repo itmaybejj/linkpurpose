@@ -12,8 +12,10 @@ Link Purpose is a lightweight vanilla JS library that finds and marks links that
 
 Each category is optional, and custom categories and icons can be defined in config.
 
+Icons on links that contain an image can be visually hidden via CSS or the noIconOnImages parameter, as these icons almost always need custom CSS for positioning.
+&nbsp;
 ### Why JS?
-Much of this *can* be done with fancy CSS, e.g. 
+Much of this *can* be done with fancy CSS, e.g.
 ```css
 a[href^="mailto:"]::after {
   content: "(Link sends email)";
@@ -22,10 +24,10 @@ a[href^="mailto:"]::after {
 
 But JS lets us do some fancy things:
 1. The last word of the link can be wrapped into a span with the icon, preventing line breaks between the text and the icon.
-2. Inline SVG can be used, taking advantage of CSS's currentColor property to follow the link text's color through hover and focus states, rather than needing to remember to override the icon color each time the link changes color.
-3. Visually hidden, *translatable* text can be provided. Automatic translations tend to miss text in CSS.
-4. Links inside Shadow DOM/Web components can be marked as well.
-
+2. Visually hidden, *translatable* alt text can be provided. Automatic translations tend to miss text in CSS.
+3. The visually hidden text can be hidden when it is redundant to the text of the link itself.
+4. Inline SVG can take advantage of CSS's currentColor property to automatically follow the link text's color through hover and focus states.
+5. Links inside Shadow DOM/Web components can be marked as well.
 
 ### Generated markup
 The library accepts numerous parameters for its markup. But by default, it will convert this:
@@ -104,6 +106,8 @@ E.g., to set your own classes for all marked links, override any of the base cla
 
 You only have to list options you want to override; any "missing" keys will fall back to the defaults.
 
+&nbsp;
+
 ### Custom icons via inline SVG
 This is the default icon type, so you just need to provide the SVG you want overridden. E.g.:
 ```html
@@ -120,6 +124,8 @@ This is the default icon type, so you just need to provide the SVG you want over
     })
 </script>
 ```
+
+&nbsp;
 
 ### Custom icons via class-based icon fonts 
 
@@ -159,6 +165,8 @@ purposes: {
     // et cetera 
 }
 ```
+
+&nbsp;
 
 ### Custom icons via URLs of image files
 Switch the iconType to classes, and provide your icons **via CSS pseudo-elements or background images, rather than JavaScript.** 
@@ -233,6 +241,8 @@ Look for links in the shadow DOM within these Web components:
 shadowComponents: 'fancy-widget, tab-panel',
 ```
 
+&nbsp;
+
 ### Disabling a link category
 Maybe you do not want to mark external links at all, only documents, emails and new windows. Each of the four can be disabled independently by negating its selector:
 ```js
@@ -242,6 +252,8 @@ purposes: {
     }
 }
 ```
+
+&nbsp;
 
 ### Adding a link category
 This is a bit more work, because you need to provide all the keys the base library looks for. 
@@ -262,6 +274,8 @@ purposes: {
 }
 ```
 
+&nbsp;
+
 ### Prevent marking certain pages
 
 Maybe you have a dynamic, inline editing tool, and you do not want the DOM manipulated if it is present. Or maybe you only want the page modified if something is NOT present.
@@ -272,6 +286,9 @@ noRunIfPresent: '.example-editor-toolbar',
 
 noRunIfAbsent: '.example-public-content-wrapper,
 ```
+
+&nbsp;
+
 
 ### Overriding selectors
 
@@ -306,12 +323,13 @@ if (CSS.supports('selector(:is(body))')) {
     const linkPurpose = new LinkPurpose({});
 }
 ```
+&nbsp;
+&nbsp;
+## All available parameters
 
-## Putting it all together
+This is the *entire* default option set. Every single one of these is ***optional***. *Your* options object should only contain the keys you want overridden. 
 
-This is the *entire* default option set. Override any of these as suggested above, or add additional Purposes.
-
-And remember that *your* options array should only contain the keys you want overridden. For most sites, that is just the domain and what type of icon you want to use.
+For most sites, that is just the domain.
 
 ```html
 <script>
