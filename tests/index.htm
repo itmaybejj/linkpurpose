@@ -32,20 +32,20 @@
             <section id="new-window">
                 <ul>
                     <li>
-                        <a href="/" target="_blank">New window link</a>
+                        <a href="/" target="_blank">_Blank link</a>
                     </li>
                 </ul>
             </section>
             <section id="document">
                 <ul>
                     <li>
-                        <a href="/example.pdf">PDF link</a>
+                        <a href="/example.pdf">My CV</a>
                     </li>
                     <li>
-                        <a href="/example.pdf" download="">PDF and download, PDF should win</a>
+                        <a href="/example.pdf" download="">My CV and dwnld attribute, CV should win</a>
                     </li>
                     <li>
-                        <a href="/example.pdf" target="_blank">PDF and new window, PDF should win</a>
+                        <a href="/example.pdf" target="_blank">CV and _blank, CV should win</a>
                     </li>
                 </ul>
             </section>
@@ -61,10 +61,10 @@
             <section id="email">
                 <ul>
                     <li>
-                        <a href="mailto:example@example.com">Email</a>
+                        <a href="mailto:example@example.com">Contact us</a>
                     </li>
                     <li>
-                        <a href="mailto:example@example.com">Email in new window link</a>
+                        <a href="mailto:example@example.com">Contact us in new window</a>
                     </li>
                 </ul>
             </section>
@@ -72,10 +72,18 @@
             <section id="download">
                 <ul>
                     <li>
-                        <a href="/" download>Download</a>
+                        <a href="/" download>Zip</a>
                     </li>
                     <li>
-                        <a href="https://www.princeton.edu" download target="_blank">Download from external in new window link</a>
+                        <a href="https://www.princeton.edu" download target="_blank">Zip from external in _blank link</a>
+                    </li>
+                </ul>
+
+            </section>
+            <section id="phone">
+                <ul>
+                    <li>
+                        <a href="tel:123">Call</a>
                     </li>
                 </ul>
 
@@ -93,13 +101,18 @@
                         <a href="/" download><figure>(fig)</figure>Link with figure</a>
                     </li>
                 </ul>
-                <h3>Icon has no hidden text [redundant string branch only]</h3>
+                <h3>Icon has modified hidden text</h3>
                 <ul>
                     <li>
-                        <a href="/" download>Link that warns about download (no screen reader text)</a>
+                        <a href="mailto:example@example.com">example@example.com</a>
+                    <li>
+                        <a href="/" download>Download</a>
                     </li>
                     <li>
-                        <a href="/" download target="_blank">Link that warns about download but not new window (new window text)</a>
+                        <a href="/" download>Download (opens in new window)</a>
+                    </li>
+                    <li>
+                        <a href="/" download target="_blank">Link that warns about download but not where it opens (some screen reader text)</a>
                     </li>
                 </ul>
             </section>
@@ -112,12 +125,6 @@
                 </li>
                 <li>
                     <a href="/?http%3A%2F%2F">HTTP as query variable should be ignored</a>
-                </li>
-                <li>
-                    <a href="/" download>Link that warns about download (no screen reader text)</a>
-                </li>
-                <li>
-                    <a href="/" download target="_blank">Link that warns about download but not new window (new window text)</a>
                 </li>
             </ul>
         </div>
