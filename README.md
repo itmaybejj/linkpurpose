@@ -226,26 +226,43 @@ purposes: {
 &nbsp;
 &nbsp;
 
+
+
 ## Controlling which links get marked
 
-Maybe you only want to mark links in the content area and footer...so provide your selectors for these regions in the "roots" option: 
+Only mark links within these sections of the page:
 ```js
-roots: '.example-content-area, #example-footer',
+roots: '.example-content-area, #example-footer'
 ```
 
-Maybe an area visually conveys that links are external, so you only need the screen reader hint, not the icon: 
+Insert the icon but visually hide it on links that contain images. Themers can selectively reveal these icons via CSS:
 ```js
-hideIcon: '.fancycard a, .in-the-news a'
+noIconOnImages: true,
 ```
 
-Maybe an area has links that are obviously external even to screen readers. Skip that by defining a CSS :not() selector for links you want ignored:
+Do not insert any icon on these links -- only provide a screen reader hint:
 ```js
-ignore: ':not(.purchase-links a, .external-resources a)',
+hideIcon: '.fancycard a, .in-the-news a,
 ```
 
-Or maybe the content area contains some shadow DOM / Web components, and you want the library to check within them:
+Do not mark these links at all:
 ```js
-shadowComponents: 'example-component-1, .example-component-2',
+ignore: '.purchase-links a, .external-resources a',
+```
+
+Look for links in the shadow DOM within these Web components:
+```js
+shadowComponents: 'fancy-widget, tab-panel',
+```
+
+### Disabling a link category
+Maybe you do not want to mark external links at all, only documents, emails and new windows. Each of the four can be disabled independently by negating its selector:
+```js
+purposes: {
+    newWindow: {
+        selector: false,
+    }
+}
 ```
 
 ### Disabling a link category

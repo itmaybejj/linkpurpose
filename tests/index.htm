@@ -12,94 +12,112 @@
         <h1>Link Purpose tests</h1>
     </header>
     <main>
-        <section id="external">
-            <ul>
-                <li>
-                    <a href="https://www.princeton.edu">External links</a>
-                </li>
-                <li>
-                    <a href="https://www.princeton.edu">External links with trailing whitespace </a>
-                </li>
-                <li style="width: 20em;">
-                    An <a href="https://www.princeton.edu">External link</a> inline in a sentence that breaks over several lines, followed by more words on a line that should have the same line height.
-                </li>
-            </ul>
+        <div id="positive">
+            <h2>Icons shown</h2>
 
-        </section>
-        <section id="new-window">
-            <ul>
-                <li>
-                    <a href="/" target="_blank">New window link</a>
-                </li>
-            </ul>
-        </section>
-        <section id="document">
-            <ul>
-                <li>
-                    <a href="/example.pdf">PDF link</a>
-                </li>
-                <li>
-                    <a href="/example.pdf" download="">PDF download</a>
-                </li>
-                <li>
-                    <a href="/example.pdf" target="_blank">PDF new window link</a>
-                </li>
-            </ul>
-        </section>
+            <section id="external">
+                <ul>
+                    <li>
+                        <a href="https://www.princeton.edu">External links</a>
+                    </li>
+                    <li>
+                        <a href="https://www.princeton.edu">External links with trailing whitespace </a>
+                    </li>
+                    <li style="width: 20em;">
+                        An <a href="https://www.princeton.edu">External link inline</a> in a sentence that breaks over several lines, followed by more words on a line that should have the same line height.
+                    </li>
+                </ul>
 
-        <section id="protocol">
-            <ul>
-                <li>
-                    <a href="javascript:">JS Href</a>
-                </li>
-                <li>
-                    <a href="Zoom://" target="_blank">App protocol link</a>
-                </li>
-                <li>
-                    <a href="/?http%3A%2F%2F">Link with encoded http://</a>
-                </li>
-                <li>
-                    <a href="/?foo=https://"><strong>Invalid</strong> link with ?foo=https:// </a>
-                </li>
-            </ul>
-        </section>
+            </section>
+            <section id="new-window">
+                <ul>
+                    <li>
+                        <a href="/" target="_blank">New window link</a>
+                    </li>
+                </ul>
+            </section>
+            <section id="document">
+                <ul>
+                    <li>
+                        <a href="/example.pdf">PDF link</a>
+                    </li>
+                    <li>
+                        <a href="/example.pdf" download="">PDF and download, PDF should win</a>
+                    </li>
+                    <li>
+                        <a href="/example.pdf" target="_blank">PDF and new window, PDF should win</a>
+                    </li>
+                </ul>
+            </section>
 
-        <section id="email">
-            <ul>
-                <li>
-                    <a href="mailto:example@example.com">Email</a>
-                </li>
-                <li>
-                    <a href="mailto:example@example.com">Email in new window link</a>
-                </li>
-            </ul>
-        </section>
+            <section id="protocol">
+                <ul>
+                    <li>
+                        <a href="Zoom://" target="_blank">App protocol link</a>
+                    </li>
+                </ul>
+            </section>
 
-        <section id="download">
-            <ul>
-                <li>
-                    <a href="/" download>Download</a>
-                </li>
-                <li>
-                    <a href="https://www.princeton.edu" download target="_blank">Download from external in new window link</a>
-                </li>
-            </ul>
-        </section>
+            <section id="email">
+                <ul>
+                    <li>
+                        <a href="mailto:example@example.com">Email</a>
+                    </li>
+                    <li>
+                        <a href="mailto:example@example.com">Email in new window link</a>
+                    </li>
+                </ul>
+            </section>
 
-        <section id="exclusions">
-            <h2>Icon Exclusions</h2>
+            <section id="download">
+                <ul>
+                    <li>
+                        <a href="/" download>Download</a>
+                    </li>
+                    <li>
+                        <a href="https://www.princeton.edu" download target="_blank">Download from external in new window link</a>
+                    </li>
+                </ul>
+
+            </section>
+            <section id="iconHidden">
+                <h3>Icon present but hidden</h3>
+                <ul>
+                    <li>
+                        <a href="/" download><img src="download_FILL0_wght400_GRAD0_opsz24.svg">Link with image</a>
+                    </li>
+                    <li>
+                        <a href="/" download><span><img src="download_FILL0_wght400_GRAD0_opsz24.svg"></span>Link with nested image</a>
+                    </li>
+                    <li>
+                        <a href="/" download><figure>(fig)</figure>Link with figure</a>
+                    </li>
+                </ul>
+                <h3>Icon has no hidden text [redundant string branch only]</h3>
+                <ul>
+                    <li>
+                        <a href="/" download>Link that warns about download (no screen reader text)</a>
+                    </li>
+                    <li>
+                        <a href="/" download target="_blank">Link that warns about download but not new window (new window text)</a>
+                    </li>
+                </ul>
+            </section>
+        </div>
+        <div id="negative">
+            <h2>Icons not shown</h2>
             <ul>
                 <li>
-                    <a href="/" download><img src="download_FILL0_wght400_GRAD0_opsz24.svg">Link with image</a>
+                    <a href="javascript:">JS Href should be ignored</a>
                 </li>
                 <li>
-                    <a href="/" download><span><img src="download_FILL0_wght400_GRAD0_opsz24.svg"></span>Link with nested image</a>
-                </li>
-                <li>
-                    <a href="/" download><figure>(fig)</figure>Link with figure</a>
+                    <a href="/?http%3A%2F%2F">HTTP as query variable should be ignored</a>
                 </li>
             </ul>
-        </section>
+        </div>
+
+
+
 
 
 
@@ -112,6 +130,7 @@
             const linkPurpose = new LinkPurpose({
 
               noReferrer: true,
+              noIconOnImages: true,
               purposes: {
                 spreadsheet: {
                   priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
@@ -134,6 +153,9 @@
         </script>
 
         <style>
+            body {
+                padding: 2rem 5%;
+            }
             a:hover {
                 color: wheat;
                 background-color: brown;
@@ -144,12 +166,6 @@
                 margin: 0 .25rem;
                 font-style: italic;
                 color: black;
-            }
-            .link-purpose-app::before {
-                content: "(Protocol)";
-            }
-            .link-purpose-external::before {
-                content: "(External)";
             }
         </style>
     </main>

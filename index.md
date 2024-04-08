@@ -208,24 +208,29 @@ purposes: {
 
 ## Controlling which links get marked
 
-Maybe you only want to mark links in the content area and footer...so provide your selectors for these regions in the "roots" option: 
+Only mark links within these sections of the page: 
 ```js
 roots: '.example-content-area, #example-footer'
 ```
 
-Maybe an area visually conveys that links are external, so you only need the screen reader hint, not the icon: 
+Insert the icon but visually hide it on links that contain images. Themers can selectively reveal these icons via CSS:
+```js
+noIconOnImages: true,
+```
+
+Do not insert any icon on these links -- only provide a screen reader hint: 
 ```js
 hideIcon: '.fancycard a, .in-the-news a,
 ```
 
-Maybe an area has links that are obviously external even to screen readers. Skip that by defining a CSS selector for links you want ignored:
+Do not mark these links at all:
 ```js
 ignore: '.purchase-links a, .external-resources a',
 ```
 
-Or maybe the content area contains some shadow DOM / Web components, and you want the library to check within them:
+Look for links in the shadow DOM within these Web components:
 ```js
-shadowComponents: 'example-component-1, .example-component-2',
+shadowComponents: 'fancy-widget, tab-panel',
 ```
 
 ### Disabling a link category
