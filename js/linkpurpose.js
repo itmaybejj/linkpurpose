@@ -5,7 +5,7 @@ class LinkPurpose {
   // ESLint config
 
   constructor (option) {
-    LinkPurpose.version = '1.0.0';
+    LinkPurpose.version = '1.0.1';
 
     let initiated = false;
     let checkLinks = [];
@@ -25,6 +25,7 @@ class LinkPurpose {
 
       // For these links, only provide the screen reader help text. e.g. '.in-the-news a'
       hideIcon: '',
+      noIconOnImages: '',
 
       // Identify links directly, e.g. "header a, footer a, .my-ok-link".
       // If this is not a valid selector, no links will be flagged.
@@ -59,7 +60,8 @@ class LinkPurpose {
           iconType: 'html', // html, src or classes
           iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M432 48H208c-17.7 0-32 14.3-32 32V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V336h16c17.7 0 32-14.3 32-32V80c0-17.7-14.3-32-32-32zM48 448c0 8.8 7.2 16 16 16H320c8.8 0 16-7.2 16-16V256H48V448zM64 128H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></svg>',
-          iconClasses: ['fa-regular', 'fa-window-restore'] // Goes on icon span only if iconType is "classes"
+          iconClasses: ['fa-regular', 'fa-window-restore'], // Goes on icon span only if iconType is "classes"
+          redundantStrings: /\b(window|tab)\b/i, // Screen reader text will not be inserted if present
         },
 
         external: {
@@ -73,7 +75,8 @@ class LinkPurpose {
           iconType: 'html',
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg>',
-          iconClasses: ['fa-solid', 'fa-up-right-from-square']
+          iconClasses: ['fa-solid', 'fa-up-right-from-square'],
+          redundantStrings: false,
         },
 
         download: {
@@ -85,7 +88,8 @@ class LinkPurpose {
           iconType: 'html',
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>',
-          iconClasses: ['fa-solid', 'fa-download'] // set iconType to classes to use
+          iconClasses: ['fa-solid', 'fa-download'], // set iconType to classes to use
+          redundantStrings: /(download)/i,
         },
 
         document: {
@@ -97,7 +101,8 @@ class LinkPurpose {
           iconType: 'html',
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M64 464c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16H224v80c0 17.7 14.3 32 32 32h80V448c0 8.8-7.2 16-16 16H64zM64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V154.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0H64zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24H264c13.3 0 24-10.7 24-24s-10.7-24-24-24H120zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24H264c13.3 0 24-10.7 24-24s-10.7-24-24-24H120z"/></svg>',
-          iconClasses: ['fa-regular', 'fa-file-lines'] // set iconType to classes to use
+          iconClasses: ['fa-regular', 'fa-file-lines'], // set iconType to classes to use
+          redundantStrings: /\b(download|file|document|doc|docx|word|excel|xls|xlsx|powerpoint|pptx|ppt)\b/i,
         },
 
         // Ref www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
@@ -112,7 +117,8 @@ class LinkPurpose {
           iconType: 'html',
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M432 64H208c-8.8 0-16 7.2-16 16V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V320h16c8.8 0 16-7.2 16-16V80c0-8.8-7.2-16-16-16zM0 192c0-35.3 28.7-64 64-64H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192zm64 32c0 17.7 14.3 32 32 32H288c17.7 0 32-14.3 32-32s-14.3-32-32-32H96c-17.7 0-32 14.3-32 32z"/></svg>',
-          iconClasses: ['fa-solid', 'fa-window-restore']
+          iconClasses: ['fa-solid', 'fa-window-restore'],
+          redundantStrings: false,
         },
 
         mail: {
@@ -124,7 +130,8 @@ class LinkPurpose {
           iconType: 'html',
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></svg>',
-          iconClasses: ['fa-regular', 'fa-envelope'] // set iconType to classes to use
+          iconClasses: ['fa-regular', 'fa-envelope'], // set iconType to classes to use
+          redundantStrings: /@|mail/i,
         },
 
         tel: {
@@ -136,7 +143,8 @@ class LinkPurpose {
           iconType: 'html',
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm90.7 96.7c9.7-2.6 19.9 2.3 23.7 11.6l20 48c3.4 8.2 1 17.6-5.8 23.2L168 231.7c16.6 35.2 45.1 63.7 80.3 80.3l20.2-24.7c5.6-6.8 15-9.2 23.2-5.8l48 20c9.3 3.9 14.2 14 11.6 23.7l-12 44C336.9 378 329 384 320 384C196.3 384 96 283.7 96 160c0-9 6-16.9 14.7-19.3l44-12z"/></svg>',
-          iconClasses: ['fa-solid', 'fa-square-phone'] // set iconType to classes to use
+          iconClasses: ['fa-solid', 'fa-square-phone'], // set iconType to classes to use
+          redundantStrings: false,
         }
       }
 
@@ -320,6 +328,11 @@ class LinkPurpose {
 
       marks.forEach((mark) => {
         mark.hits.forEach((hit, i) => {
+          // Don't append redundant screen reader text.
+          let showText = !(LinkPurpose.options.purposes[hit.type].redundantStrings &&
+            mark.link.textContent.length > 0 &&
+            mark.link.textContent.match(LinkPurpose.options.purposes[hit.type].redundantStrings));
+
           if (i === 0) {
             let spanTarget = mark.link
 
@@ -328,7 +341,10 @@ class LinkPurpose {
             }
 
             if (mark.showIcon) {
-              mark.link.classList.add(LinkPurpose.options.baseLinkClass, LinkPurpose.options.purposes[hit.type].linkClass)
+              mark.link.classList.add(LinkPurpose.options.baseLinkClass, LinkPurpose.options.purposes[hit.type].linkClass);
+              if (LinkPurpose.options.noIconOnImages) {
+                mark.link.classList.add('link-purpose-hide-on-image')
+              }
 
               if (LinkPurpose.options.purposes[hit.type].iconPosition === 'beforeend') {
                 // Wrap last word in link into a nobreak span.
@@ -393,12 +409,12 @@ class LinkPurpose {
             if (LinkPurpose.options.hiddenTextClass) {
               iconText.classList.add(LinkPurpose.options.hiddenTextClass);
             }
-            iconText.textContent = `(${LinkPurpose.options.purposes[hit.type].message})`;
+            iconText.textContent = showText ? `(${LinkPurpose.options.purposes[hit.type].message})` : '';
             spanTarget.append(iconText);
-          } else {
+          } else if (showText) {
             const iconText = mark.link.querySelector('.link-purpose-text')
             iconText.classList.add(LinkPurpose.options.purposes[hit.type].iconWrapperClass)
-            iconText.textContent = iconText.textContent + LinkPurpose.options.purposes[hit.type].message
+            iconText.textContent = iconText.textContent + ` (${LinkPurpose.options.purposes[hit.type].message})`
           }
           if (LinkPurpose.options.purposes[hit.type].newWindow) {
             mark.link.setAttribute('target', '_blank')
