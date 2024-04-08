@@ -2,21 +2,21 @@
     white-space: nowrap;
 }
 .link-purpose-icon {
-    width: .917em;
-    height: 1em;
-    margin: 0 .25em;
     display: inline-block;
+    width: .917em;
+    height: .917em;
+    min-height: 9px;
+    margin: 0 .25em;
     font-size: .75em;
 }
 .link-purpose-icon.svg-inline--fa {
     vertical-align: initial;
 }
-.linkpurpose-default-svg {
-    transform: translateY(.0625em);
+.link-purpose-external-icon {
+    height: .875em;
 }
 .link-purpose-mail-icon .linkpurpose-default-svg {
-    width: 1em;
-    transform: translateY(.133em);
+    transform: translateY(2px);
 }
 .link-purpose-document-icon .linkpurpose-default-svg {
     transform: none;
@@ -27,14 +27,20 @@
     vertical-align: initial;
 }
 .link-purpose-icon.svg-inline--fa {
-  margin: 0 .25em;
+  margin: 0 .1875em;
 }
 .link-purpose-text {
-    clip: rect(0 0 0 0); 
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
     position: absolute;
-    white-space: nowrap; 
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
     width: 1px;
+    height: 1px;
+    white-space: nowrap;
+}
+img ~ .link-purpose-icon,
+figure ~ .link-purpose-icon,
+svg ~ .link-purpose-icon,
+a *:has(img, svg, figure) ~ :is(.link-purpose-nobreak, .link-purpose-icon) {
+    display: none;
 }

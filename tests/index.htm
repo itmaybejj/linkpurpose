@@ -1,6 +1,8 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTag, HtmlUnknownTarget -->
 <html lang="en">
     <head>
+        <title>Testing base library</title>
         <meta charset="utf-8">
         <link rel="stylesheet" media="all" href="../css/linkpurpose.css">
         <script src="../js/linkpurpose.js"></script>
@@ -14,6 +16,9 @@
             <ul>
                 <li>
                     <a href="https://www.princeton.edu">External links</a>
+                </li>
+                <li>
+                    <a href="https://www.princeton.edu">External links with trailing whitespace </a>
                 </li>
                 <li style="width: 20em;">
                     An <a href="https://www.princeton.edu">External link</a> inline in a sentence that breaks over several lines, followed by more words on a line that should have the same line height.
@@ -34,7 +39,27 @@
                     <a href="/example.pdf">PDF link</a>
                 </li>
                 <li>
-                    <a href="/exampl.pdf" target="_blank">PDF new window link</a>
+                    <a href="/example.pdf" download="">PDF download</a>
+                </li>
+                <li>
+                    <a href="/example.pdf" target="_blank">PDF new window link</a>
+                </li>
+            </ul>
+        </section>
+
+        <section id="protocol">
+            <ul>
+                <li>
+                    <a href="javascript:">JS Href</a>
+                </li>
+                <li>
+                    <a href="Zoom://" target="_blank">App protocol link</a>
+                </li>
+                <li>
+                    <a href="/?http%3A%2F%2F">Link with encoded http://</a>
+                </li>
+                <li>
+                    <a href="/?foo=https://"><strong>Invalid</strong> link with ?foo=https:// </a>
                 </li>
             </ul>
         </section>
@@ -50,16 +75,61 @@
             </ul>
         </section>
 
+        <section id="download">
+            <ul>
+                <li>
+                    <a href="/" download>Download</a>
+                </li>
+                <li>
+                    <a href="https://www.princeton.edu" download target="_blank">Download from external in new window link</a>
+                </li>
+            </ul>
+        </section>
+
+        <section id="exclusions">
+            <h2>Icon Exclusions</h2>
+            <ul>
+                <li>
+                    <a href="/" download><img src="download_FILL0_wght400_GRAD0_opsz24.svg">Link with image</a>
+                </li>
+                <li>
+                    <a href="/" download><span><img src="download_FILL0_wght400_GRAD0_opsz24.svg"></span>Link with nested image</a>
+                </li>
+                <li>
+                    <a href="/" download><figure>(fig)</figure>Link with figure</a>
+                </li>
+            </ul>
+        </section>
+
 
 
 
         <!-- Instantiate-->
+        <!--suppress JSUnusedGlobalSymbols -->
         <script>
-          const linkPurpose = new LinkPurpose({
-          
-            noReferrer: true
-            
-          });
+
+          if (CSS.supports('selector(:is(body))')) {
+            const linkPurpose = new LinkPurpose({
+
+              noReferrer: true,
+              purposes: {
+                spreadsheet: {
+                  priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
+                  selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
+                  message: '(Link downloads spreadsheet)', // Hidden text for screen readers
+                  linkClass: 'link-purpose-spreadsheet', // Goes on link
+                  iconWrapperClass: 'link-purpose-spreadsheet-icon', // Goes on span around icon
+                  iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
+                  iconType: 'classes', // Apply classes to a span to create link
+                  iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
+                },
+                external: {
+                  newWindow: true
+                }
+              }
+          })
+
+          };
 
         </script>
 
@@ -67,6 +137,19 @@
             a:hover {
                 color: wheat;
                 background-color: brown;
+            }
+            .link-purpose::before {
+                font-family: sans-serif;
+                font-size: 12px;
+                margin: 0 .25rem;
+                font-style: italic;
+                color: black;
+            }
+            .link-purpose-app::before {
+                content: "(Protocol)";
+            }
+            .link-purpose-external::before {
+                content: "(External)";
             }
         </style>
     </main>
