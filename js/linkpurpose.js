@@ -413,7 +413,6 @@ class LinkPurpose {
             spanTarget.append(iconText);
           } else if (showText) {
             const iconText = mark.link.querySelector('.link-purpose-text')
-            iconText.classList.add(LinkPurpose.options.purposes[hit.type].iconWrapperClass)
             iconText.textContent = iconText.textContent + ` (${LinkPurpose.options.purposes[hit.type].message})`
           }
           if (LinkPurpose.options.purposes[hit.type].newWindow) {
