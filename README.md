@@ -88,6 +88,7 @@ And that's it.
 &nbsp;
 &nbsp;
 
+
 ## Choosing your own classes and icons
 
 Default parameters may be overridden when calling the library.
@@ -141,66 +142,75 @@ This is the default icon type, so you just need to provide the SVG you want over
 </script>
 ```
 
-### Custom icons via class-based icon fonts 
+&nbsp;
 
-This assumes you already have a class-based icon library on the page. 
+### Custom icons via class-based icon fonts
 
-Here's an example configuration that switches all four default purposes to use classes rather than the included inline ([Material](https://fonts.google.com/icons)) SVG icons. [FontAwesome](https://fontawesome.com/docs/web/setup/get-started) icon classes are provided by default:
+This assumes you already have a class-based icon library on the page.
+
+Here's an example configuration that switches each of the default purposes to use classes rather than the included inline SVG icons:
 
 ```js
 // ...inside script wrapper...
 
 purposes: {
+    app: {
+      iconType: 'classes',
+    },
     externalLink: {
-        iconType: 'classes',
+      iconType: 'classes',
     },
-
     document: {
-        iconType: 'classes',
+      iconType: 'classes',
     },
-
+    download: {
+      iconType: 'classes',
+    },
     mailTo: {
-        iconType: 'classes',
+      iconType: 'classes',
     },
-
     newWindow: {
-        iconType: 'classes',
+      iconType: 'classes',
+    },
+    tel: {
+      iconType: 'classes',
     },
 }
 ```
 
-You can then provide your own classes for any of these using the "iconClasses" key:
+If no classes are specified, the [FontAwesome](https://fontawesome.com/docs/web/setup/get-started) classes that match the default SVGs will be inserted.
+
+Specify custom classes with the iconClasses key. This would make a [smiley face](https://fontawesome.com/icons/smile?f=classic&s=regular):
 ```js
 purposes: {
-    externalLink: {
-        iconType: 'classes',
-        iconClasses: ['fa-regular','fa-face-smile'],
-    },
-    // et cetera 
+  externalLink: {
+    iconType: 'classes',
+      iconClasses: ['fa-face-smile','fa-regular'],
+  },
 }
 ```
 
-### Custom icons via URLs of image files
-Switch the iconType to classes, and provide your icons **via CSS pseudo-elements or background images, rather than JavaScript.** 
+&nbsp;
 
-E.g.:
+### Custom icons via CSS
+Switch the iconType to classes, and provide your icons via CSS pseudo-elements or background images. E.g.:
 
 ```css
-.link-purpose-icon {
-  background-size: .75em .75em;
-  background-repeat: no-repeat;
-}
-
-.link-purpose-icon:hover::before,
-.link-purpose-icon:focus::before, {
-  filter: hue-rotate(180deg);
-}
-
-.link-purpose-window-icon {
-  background-image: url("/my-images-folder/my-newWindow-icon.svg");
-}
+/* Applies to mailto */
 .link-purpose-mailto-icon {
   background-image: url("/my-images-folder/my-envelope-icon.svg");
+}
+
+/* Applies to all */
+.link-purpose-icon {
+    background-size: .75em .75em;
+    background-repeat: no-repeat;
+}
+
+/* Declare colors, since they will no longer inherit */
+.link-purpose-icon:hover,
+.link-purpose-icon:focus, {
+    filter: hue-rotate(180deg);
 }
 
 /* etc... */
@@ -212,7 +222,7 @@ E.g.:
 
 ## Translations and/or overriding the text provided to screen readers
 
-Each of the four marked link types has a default hidden text provided to screen readers. Each can be overridden.
+Each of the marked link types has a default hidden text provided to screen readers. Each can be overridden:
 ```js
 // ...inside script wrapper...
 
@@ -225,8 +235,6 @@ purposes: {
 
 &nbsp;
 &nbsp;
-
-
 
 ## Controlling which links get marked
 
@@ -254,9 +262,10 @@ Look for links in the shadow DOM within these Web components:
 ```js
 shadowComponents: 'fancy-widget, tab-panel',
 ```
+&nbsp;
 
-### Disabling a link category
-Maybe you do not want to mark external links at all, only documents, emails and new windows. Each of the four can be disabled independently by negating its selector:
+### Removing a link category
+Negate the selector to turn off a link category:
 ```js
 purposes: {
     newWindow: {
@@ -264,25 +273,17 @@ purposes: {
     }
 }
 ```
+&nbsp;
 
-### Disabling a link category
-Maybe you do not want to mark external links at all, only documents, emails and new windows. Each of the four can be disabled independently by negating its selector:
-```js
-purposes: {
-    newWindow: {
-        selector: false,
-    }
-}
-```
 
 ### Adding a link category
-This is a bit more work, because you must provide ALL the keys the base library looks for, or the library well error out.
+This is a bit more work, because you must provide ALL the keys the base library looks for, or the library may error out.
 
 Here's an example that adds a type for spreadsheets, and assigns it to the FontAwesome Excel icon class:
 ```js
 purposes: {
     spreadsheet: {
-          priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
+          priority: 50, // Highest number "wins" on multiple matches, e.g. a spreadsheet download from an external site
           selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
           message: '(Link downloads spreadsheet)', // Hidden text for screen readers
           linkClass: 'link-purpose-spreadsheet', // Goes on link
@@ -290,40 +291,41 @@ purposes: {
           iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
           iconType: 'classes', // Apply classes to a span to create link
           iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
+          redundantStrings: /(xls|spreadsheet|download)/i, // Do not add screen reader text if the text of the link matches this regex
         },
 }
 ```
 
+&nbsp;
+
 ### Prevent marking certain pages
 
-Maybe you have a dynamic, inline editing tool, and you do not want the DOM manipulated if it is present. Or maybe you only want the page modified if something is NOT present.
+These parameters make sure the library does not modify the DOM when a selector is present or absent, e.g., while a page is being edited:
 ```js
 // ...inside script wrapper...
 
-noRunIfPresent: '.example-editor-toolbar',
+noRunIfPresent: '.edit-mode',
 
-noRunIfAbsent: '.example-public-content-wrapper,
+noRunIfAbsent: '.page-content,
 ```
+
+&nbsp;
 
 ### Overriding selectors
 
-Default selectors are provided for links (`a[href]`), as well as which links are mailTo, documents, etc.
+Default selectors are provided for which both HTML tags are links (`a[href]`) as well as which links match each category.
 
-Any of these selectors can be overridden if you want to mark more (or less). e.g.:
+These selectors can be overridden if you want to mark more (or less). e.g.:
 
 ```js
-baseSelector: 'a[href], custom-link-tag[href]',
+/* Treat custom element as if it is a link */
+baseSelector: 'a[href], custom-link-tag',
 
 purposes: {
-
-    document: {
-        selector: '[href$=\'.pdf\'], [href*=\'.latex?\']',
-    }
-
     mailto: {
+        /* Add selector for JS-based action */
         selector: '[href^="mailto:"], [data-action-mail-to]',
     }
-
 }
 ```
 

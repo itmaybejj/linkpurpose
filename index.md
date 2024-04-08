@@ -55,6 +55,7 @@ You can also bring your own icons: inline SVG, remote img files and class-based 
 &nbsp;
 &nbsp;
 
+
 ## Basic use
 
 Download and attach the JS and the default CSS:
@@ -104,6 +105,20 @@ E.g., to set your own classes for all marked links, override any of the base cla
 
 You only have to list options you want to override; any "missing" keys will fall back to the defaults.
 
+### Showing icons on image links
+
+There's a line of CSS in the library that automatically hides the visual icon on links that contain an image.
+
+It often makes a great deal of sense to show an icon in these cases, but the positioning almost always requires some custom CSS.
+
+To show these icons, add this to your theme CSS:
+```css
+ img + .link-purpose-icon, figure + .link-purpose-icon {
+  display: initial;
+}
+```
+&nbsp;
+
 ### Custom icons via inline SVG
 This is the default icon type, so you just need to provide the SVG you want overridden. E.g.:
 ```html
@@ -120,67 +135,72 @@ This is the default icon type, so you just need to provide the SVG you want over
     })
 </script>
 ```
+&nbsp;
+### Custom icons via class-based icon fonts
 
-### Custom icons via class-based icon fonts 
+This assumes you already have a class-based icon library on the page.
 
-This assumes you already have a class-based icon library on the page. 
-
-Here's an example configuration that switches all four default purposes to use classes rather than the included inline ([Material](https://fonts.google.com/icons)) SVG icons. [FontAwesome](https://fontawesome.com/docs/web/setup/get-started) icon classes are provided by default:
+Here's an example configuration that switches each of the default purposes to use classes rather than the included inline SVG icons:
 
 ```js
 // ...inside script wrapper...
 
 purposes: {
+    app: {
+      iconType: 'classes',
+    },
     externalLink: {
-        iconType: 'classes',
+      iconType: 'classes',
     },
-
     document: {
-        iconType: 'classes',
+      iconType: 'classes',
     },
-
+    download: {
+      iconType: 'classes',
+    },
     mailTo: {
-        iconType: 'classes',
+      iconType: 'classes',
     },
-
     newWindow: {
-        iconType: 'classes',
+      iconType: 'classes',
+    },
+    tel: {
+      iconType: 'classes',
     },
 }
 ```
 
-You can then provide your own classes for any of these using the "iconClasses" key:
+If no classes are specified, the [FontAwesome](https://fontawesome.com/docs/web/setup/get-started) classes that match the default SVGs will be inserted.
+
+Specify custom classes with the iconClasses key. This would make a [smiley face](https://fontawesome.com/icons/smile?f=classic&s=regular):
 ```js
 purposes: {
     externalLink: {
         iconType: 'classes',
-        iconClasses: ['fa-regular','fa-face-smile'],
+        iconClasses: ['fa-face-smile','fa-regular'],
     },
-    // et cetera 
 }
 ```
 
-### Custom icons via URLs of image files
-Switch the iconType to classes, and provide your icons **via CSS pseudo-elements or background images, rather than JavaScript.** 
-
-E.g.:
+### Custom icons via CSS
+Switch the iconType to classes, and provide your icons via CSS pseudo-elements or background images. E.g.:
 
 ```css
-.link-purpose-icon {
-  background-size: .75em .75em;
-  background-repeat: no-repeat;
-}
-
-.link-purpose-icon:hover::before,
-.link-purpose-icon:focus::before, {
-  filter: hue-rotate(180deg);
-}
-
-.link-purpose-window-icon {
-  background-image: url("/my-images-folder/my-newWindow-icon.svg");
-}
+/* Applies to mailto */
 .link-purpose-mailto-icon {
   background-image: url("/my-images-folder/my-envelope-icon.svg");
+}
+
+/* Applies to all */
+.link-purpose-icon {
+    background-size: .75em .75em;
+    background-repeat: no-repeat;
+}
+
+/* Declare colors, since they will no longer inherit */
+.link-purpose-icon:hover,
+.link-purpose-icon:focus, {
+    filter: hue-rotate(180deg);
 }
 
 /* etc... */
@@ -192,7 +212,7 @@ E.g.:
 
 ## Translations and/or overriding the text provided to screen readers
 
-Each of the four marked link types has a default hidden text provided to screen readers. Each can be overridden.
+Each of the marked link types has a default hidden text provided to screen readers. Each can be overridden:
 ```js
 // ...inside script wrapper...
 
@@ -208,7 +228,7 @@ purposes: {
 
 ## Controlling which links get marked
 
-Only mark links within these sections of the page: 
+Only mark links within these sections of the page:
 ```js
 roots: '.example-content-area, #example-footer'
 ```
@@ -218,7 +238,7 @@ Insert the icon but visually hide it on links that contain images. Themers can s
 noIconOnImages: true,
 ```
 
-Do not insert any icon on these links -- only provide a screen reader hint: 
+Do not insert any icon on these links -- only provide a screen reader hint:
 ```js
 hideIcon: '.fancycard a, .in-the-news a,
 ```
@@ -232,9 +252,10 @@ Look for links in the shadow DOM within these Web components:
 ```js
 shadowComponents: 'fancy-widget, tab-panel',
 ```
+&nbsp;
 
-### Disabling a link category
-Maybe you do not want to mark external links at all, only documents, emails and new windows. Each of the four can be disabled independently by negating its selector:
+### Removing a link category
+Negate the selector to turn off a link category:
 ```js
 purposes: {
     newWindow: {
@@ -242,15 +263,17 @@ purposes: {
     }
 }
 ```
+&nbsp;
+
 
 ### Adding a link category
-This is a bit more work, because you need to provide all the keys the base library looks for. 
+This is a bit more work, because you must provide ALL the keys the base library looks for, or the library may error out.
 
 Here's an example that adds a type for spreadsheets, and assigns it to the FontAwesome Excel icon class:
 ```js
 purposes: {
     spreadsheet: {
-          priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
+          priority: 50, // Highest number "wins" on multiple matches, e.g. a spreadsheet download from an external site
           selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
           message: '(Link downloads spreadsheet)', // Hidden text for screen readers
           linkClass: 'link-purpose-spreadsheet', // Goes on link
@@ -258,54 +281,44 @@ purposes: {
           iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
           iconType: 'classes', // Apply classes to a span to create link
           iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
+          redundantStrings: /(xls|spreadsheet|download)/i, // Do not add screen reader text if the text of the link matches this regex
         },
 }
 ```
 
+&nbsp;
+
 ### Prevent marking certain pages
 
-Maybe you have a dynamic, inline editing tool, and you do not want the DOM manipulated if it is present. Or maybe you only want the page modified if something is NOT present.
+These parameters make sure the library does not modify the DOM when a selector is present or absent, e.g., while a page is being edited:
 ```js
 // ...inside script wrapper...
 
-noRunIfPresent: '.example-editor-toolbar',
+noRunIfPresent: '.edit-mode',
 
-noRunIfAbsent: '.example-public-content-wrapper,
+noRunIfAbsent: '.page-content,
 ```
+
+&nbsp;
 
 ### Overriding selectors
 
-Default selectors are provided for links (`a[href]`), as well as which links are mailTo, documents, etc.
+Default selectors are provided for which both HTML tags are links (`a[href]`) as well as which links match each category.
 
-Any of these selectors can be overridden if you want to mark more (or less). e.g.:
+These selectors can be overridden if you want to mark more (or less). e.g.:
 
 ```js
-baseSelector: 'a[href], custom-link-tag[href]',
+/* Treat custom element as if it is a link */
+baseSelector: 'a[href], custom-link-tag',
 
 purposes: {
-
-    document: {
-        selector: '[href$=\'.pdf\'], [href*=\'.latex?\']',
-    }
-
     mailto: {
+        /* Add selector for JS-based action */
         selector: '[href^="mailto:"], [data-action-mail-to]',
     }
-
 }
 ```
-
 &nbsp;
-&nbsp;
-
-## Handling legacy browsers
-
-If your audience includes a high percentage of browsers that do not support ES9 (~2018), you can wrap the script call in a feature detection:
-```js
-if (CSS.supports('selector(:is(body))')) {
-    const linkPurpose = new LinkPurpose({});
-}
-```
 
 ## Putting it all together
 
