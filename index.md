@@ -13,7 +13,7 @@ Link Purpose is a lightweight vanilla JS library that finds and marks links that
 Each category is optional, and custom categories and icons can be defined in config.
 
 ### Why JS?
-Much of this *can* be done with fancy CSS, e.g. 
+Much of this *can* be done with fancy CSS, e.g.
 ```css
 a[href^="mailto:"]::after {
   content: "(Link sends email)";
@@ -22,8 +22,8 @@ a[href^="mailto:"]::after {
 
 But JS lets us do some fancy things:
 1. The last word of the link can be wrapped into a span with the icon, preventing line breaks between the text and the icon.
-2. Inline SVG can be used, taking advantage of CSS's currentColor property to follow the link text's color through hover and focus states, rather than needing to remember to override the icon color each time the link changes color.
-3. Visually hidden, *translatable* text can be provided. Automatic translations tend to miss text in CSS.
+2. Inline SVG can be used, which follow the link text's color through hover and focus states.
+3. Visually hidden, *translatable* text alternatives for screen readers can be provided. Automatic translations tend to miss text in CSS.
 4. Links inside Shadow DOM/Web components can be marked as well.
 
 
@@ -40,7 +40,7 @@ to this:
     EXAMPLE 
     <span class="link-purpose-nobreak">
         LINK
-        <span class="link-purpose-icon link-purpose-external-icon">
+        <span class="link-purpose-icon link-purpose-external-icon" aria-hidden="true">
             <svg ...></svg>
         </span>
         <span class="link-purpose-text">
@@ -50,11 +50,10 @@ to this:
 </a>
 ```
 
-You can also bring your own icons: inline SVG, remote img files and class-based symbol fonts (e.g. FontAwesome) are supported.
+The default icons can be overridden using inline SVG, img files, class-based symbol fonts (e.g. FontAwesome) and text-based symbol fonts (Material).
 
 &nbsp;
 &nbsp;
-
 
 ## Basic use
 
@@ -83,17 +82,14 @@ And that's it.
 &nbsp;
 &nbsp;
 
+
 ## Choosing your own classes and icons
 
-Default parameters may be overridden when calling the library.
-
-E.g., to set your own classes for all marked links, override any of the base class keys in addition to providing a domain:
+### Override base classes
 
 ```html
 <script>
     const linkPurpose = new LinkPurpose({
-        
-        domain: 'https://example.com, https://example.dev',
 
         baseLinkClass: 'link-purpose',
         baseIconWrapperClass: 'link-purpose-icon',
@@ -105,19 +101,6 @@ E.g., to set your own classes for all marked links, override any of the base cla
 
 You only have to list options you want to override; any "missing" keys will fall back to the defaults.
 
-### Showing icons on image links
-
-There's a line of CSS in the library that automatically hides the visual icon on links that contain an image.
-
-It often makes a great deal of sense to show an icon in these cases, but the positioning almost always requires some custom CSS.
-
-To show these icons, add this to your theme CSS:
-```css
- img + .link-purpose-icon, figure + .link-purpose-icon {
-  display: initial;
-}
-```
-&nbsp;
 
 ### Custom icons via inline SVG
 This is the default icon type, so you just need to provide the SVG you want overridden. E.g.:
@@ -125,18 +108,19 @@ This is the default icon type, so you just need to provide the SVG you want over
 <script>
     const linkPurpose = new LinkPurpose({
         
-        domain: 'https://example.com, https://example.dev',
-
         purposes: {
             document: {
-                    iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M360-240h240q17 0 28.5-11.5T640-280q0-17-11.5-28.5T600-320H360q-17 0-28.5 11.5T320-280q0 17 11.5 28.5T360-240Zm0-160h240q17 0 28.5-11.5T640-440q0-17-11.5-28.5T600-480H360q-17 0-28.5 11.5T320-440q0 17 11.5 28.5T360-400ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v447q0 33-23.5 56.5T720-80H240Zm280-560v-160H240v640h480v-440H560q-17 0-28.5-11.5T520-640ZM240-800v200-200 640-640Z"/></svg>',
+                iconHTML: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="currentColor" d="M360-240h240q17 0 28.5-11.5T640-280q0-17-11.5-28.5T600-320H360q-17 0-28.5 11.5T320-280q0 17 11.5 28.5T360-240Zm0-160h240q17 0 28.5-11.5T640-440q0-17-11.5-28.5T600-480H360q-17 0-28.5 11.5T320-440q0 17 11.5 28.5T360-400ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h287q16 0 30.5 6t25.5 17l194 194q11 11 17 25.5t6 30.5v447q0 33-23.5 56.5T720-80H240Zm280-560v-160H240v640h480v-440H560q-17 0-28.5-11.5T520-640ZM240-800v200-200 640-640Z"/></svg>',
             }
+            // etc.
         }
     })
 </script>
 ```
+
 &nbsp;
-### Custom icons via class-based icon fonts
+
+### Class-based icon fonts (e.g. FontAwesome)
 
 This assumes you already have a class-based icon library on the page.
 
@@ -170,17 +154,24 @@ purposes: {
 }
 ```
 
+&nbsp;
+
+### Text-based icon fonts (e.g. Material)
+
 If no classes are specified, the [FontAwesome](https://fontawesome.com/docs/web/setup/get-started) classes that match the default SVGs will be inserted.
 
 Specify custom classes with the iconClasses key. This would make a [smiley face](https://fontawesome.com/icons/smile?f=classic&s=regular):
 ```js
 purposes: {
-    externalLink: {
-        iconType: 'classes',
-        iconClasses: ['fa-face-smile','fa-regular'],
-    },
-}
+  download: {
+    iconHTML: '<span class="material-symbols-outlined">download</span>',
+  },
+  // etc.
+},
+
 ```
+
+&nbsp;
 
 ### Custom icons via CSS
 Switch the iconType to classes, and provide your icons via CSS pseudo-elements or background images. E.g.:
@@ -228,33 +219,72 @@ purposes: {
 
 ## Controlling which links get marked
 
-Only mark links within these sections of the page:
+### Only mark links within these sections of the page
+
 ```js
 roots: '.example-content-area, #example-footer'
 ```
 
-Insert the icon but visually hide it on links that contain images. Themers can selectively reveal these icons via CSS:
-```js
-noIconOnImages: true,
-```
+### Visually hide the icon on specific links
 
-Do not insert any icon on these links -- only provide a screen reader hint:
+The screen reader hint text will still be inserted.
+
 ```js
 hideIcon: '.fancycard a, .in-the-news a,
 ```
 
-Do not mark these links at all:
+### Visually hide the icon on links that contain images
+
+Themers can selectively reveal these icons via CSS, e.g. `.my-container .link-purpose-icon {display: initial;}`:
+```js
+noIconOnImages: true,
+```
+
+### Ignore certain links
 ```js
 ignore: '.purchase-links a, .external-resources a',
 ```
 
-Look for links in the shadow DOM within these Web components:
+### Check within Web components
 ```js
 shadowComponents: 'fancy-widget, tab-panel',
 ```
 &nbsp;
 
-### Removing a link category
+
+### Prevent marking certain pages
+
+These parameters make sure the library does not modify the DOM when a selector is present or absent, e.g., while a page is being edited:
+```js
+// ...inside script wrapper...
+
+noRunIfPresent: '.edit-mode',
+
+noRunIfAbsent: '.page-content,
+```
+
+&nbsp;
+
+## Overriding selectors
+
+Default selectors are provided for which both HTML tags are links (`a[href]`) as well as which links match each category.
+
+These selectors can be overridden if you want to mark more (or less). e.g.:
+
+```js
+/* Treat custom element as if it is a link */
+baseSelector: 'a[href], custom-link-tag',
+
+purposes: {
+    mailto: {
+        /* Add selector for JS-based action */
+        selector: '[href^="mailto:"], [data-action-mail-to]',
+    }
+}
+```
+
+
+## Removing a link category
 Negate the selector to turn off a link category:
 ```js
 purposes: {
@@ -265,8 +295,7 @@ purposes: {
 ```
 &nbsp;
 
-
-### Adding a link category
+## Adding a link category
 This is a bit more work, because you must provide ALL the keys the base library looks for, or the library may error out.
 
 Here's an example that adds a type for spreadsheets, and assigns it to the FontAwesome Excel icon class:
@@ -287,40 +316,9 @@ purposes: {
 ```
 
 &nbsp;
-
-### Prevent marking certain pages
-
-These parameters make sure the library does not modify the DOM when a selector is present or absent, e.g., while a page is being edited:
-```js
-// ...inside script wrapper...
-
-noRunIfPresent: '.edit-mode',
-
-noRunIfAbsent: '.page-content,
-```
-
 &nbsp;
 
-### Overriding selectors
-
-Default selectors are provided for which both HTML tags are links (`a[href]`) as well as which links match each category.
-
-These selectors can be overridden if you want to mark more (or less). e.g.:
-
-```js
-/* Treat custom element as if it is a link */
-baseSelector: 'a[href], custom-link-tag',
-
-purposes: {
-    mailto: {
-        /* Add selector for JS-based action */
-        selector: '[href^="mailto:"], [data-action-mail-to]',
-    }
-}
-```
-&nbsp;
-
-## Putting it all together
+## All available parameters
 
 This is the *entire* default option set. Override any of these as suggested above, or add additional Purposes.
 
