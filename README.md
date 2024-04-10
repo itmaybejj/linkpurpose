@@ -59,9 +59,11 @@ The default icons can be overridden using inline SVG, img files, class-based sym
 &nbsp;
 &nbsp;
 
-## Basic use
+## Installation
 
-Download and attach the JS and the default CSS:
+There is a turnkey [Drupal module](https://www.drupal.org/project/linkpurpose).
+
+For standalone installs, download and attach the JS and the default CSS:
 ```html
 <link rel="stylesheet" media="all" href="/YOUR-PATH-TO/linkpurpose.css">
 
