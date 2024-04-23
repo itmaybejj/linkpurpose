@@ -27,6 +27,10 @@ class LinkPurpose {
       hideIcon: '',
       noIconOnImages: '',
 
+      // Make sure the icon does not end up inside these hidden spans in the link.
+      // E.g., <a href>Email <span class="sr-only">J. Smith</span></a>
+      insertIconOutsideHiddenSpan: '.sr-only, .visually-hidden',
+
       // Identify links directly, e.g. "header a, footer a, .my-ok-link".
       // If this is not a valid selector, no links will be flagged.
       ignore: '',
@@ -351,11 +355,19 @@ class LinkPurpose {
                 let lastTextNode = mark.link.lastChild
                 let trailingWhitespace = false
                 let parentNode = mark.link
+                let excludedNode = '';
                 while (lastTextNode) {
                   if (lastTextNode.lastChild) {
-                    // Last node was not text; step down into child node.
-                    parentNode = lastTextNode
-                    lastTextNode = lastTextNode.lastChild
+                    // There's a span or something here.
+                    if (lastTextNode.matches(LinkPurpose.options.insertIconOutsideHiddenSpan)) {
+                      // It's a hidden span; go back a node.
+                      excludedNode = lastTextNode;
+                      lastTextNode = lastTextNode.previousSibling;
+                    } else {
+                      // Step down into child node.
+                      parentNode = lastTextNode
+                      lastTextNode = lastTextNode.lastChild
+                    }
                   } else if (lastTextNode.nodeName === '#text' && parentNode.lastElementChild && lastTextNode.textContent.trim().length === 0) {
                     // Last node was text, but it was whitespace. Step back into previous node.
                     trailingWhitespace = lastTextNode
@@ -368,20 +380,23 @@ class LinkPurpose {
                 }
                 if (lastTextNode && lastTextNode.nodeName === '#text' && lastTextNode.textContent.length > 0) {
                   const lastText = lastTextNode.textContent
-                  const lastWordRegex = /\S+\s*$/g
+                  const lastWordRegex = /\s*\S+\s*$/g
                   const lastWord = lastText.match(lastWordRegex)
                   if (lastWord !== null) {
                     // Wrap the last word in a span.
                     const breakPreventer = document.createElement('span')
                     breakPreventer.classList.add(LinkPurpose.options.noBreakClass)
                     breakPreventer.textContent = lastWord[0].trim()
+                    if (excludedNode) {
+                      breakPreventer.append(excludedNode);
+                    }
                     if (trailingWhitespace) {
                       breakPreventer.append(trailingWhitespace.textContent)
                       // noinspection JSPrimitiveTypeWrapperUsage
                       trailingWhitespace.textContent = ''
                     }
                     lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                    lastTextNode.parentNode.append(breakPreventer)
+                    lastTextNode.parentNode.append(' ',breakPreventer)
                     // Insert the icon into the span rather than the link.
                     spanTarget = breakPreventer
                   }

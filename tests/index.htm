@@ -131,6 +131,36 @@
                 </li>
             </ul>
         </div>
+        <div id="positive">
+            <h2>Icons inserted outside of a hidden element</h2>
+            <ul>
+                <li>
+                    <a href="/" download target="_blank">Icon should be inserted inside this <span class="not-visually-hidden" style="opacity: .35;">hidden span not in the match list</span></a>
+                </li>
+                <li>
+                    <a href="/" download target="_blank">Icon should not be inserted inside this <span class="visually-hidden" style="opacity: .25;">hidden span</span></a>
+                </li>
+                <li>
+                    <a href="/" download target="_blank">Icon should be inserted after this <span><span class="visually-hidden" style="opacity: .25;">nested hidden span</span></span></a>
+                </li>
+                <li>
+                    <a href="/" download target="_blank">variants<span class="visually-hidden" style="opacity: .25;"></span></a>
+                    <a href="/" download target="_blank">variants<span class="visually-hidden" style="opacity: .25;"></span> </a>
+                    <a href="/" download target="_blank"><span class="visually-hidden" style="opacity: .25;"></span>variants</a>
+                    <a href="/" download target="_blank"></a>
+
+                </li>
+
+            </ul>
+        </div>
+        <div id="positive">
+            <h2>Trimming</h2>
+            <ul><li>
+                <h2 class="block-heading"><a href="/" download="">Digital Accessibility?&nbsp; &ensp; &hairsp; &thinsp;
+
+                </a></h2>
+            </li></ul>
+        </div>
 
 
 
@@ -182,6 +212,15 @@
                 margin: 0 .25rem;
                 font-style: italic;
                 color: black;
+            }
+            .visually-hidden {
+                position: absolute;
+                overflow: hidden;
+                clip: rect(0 0 0 0);
+                clip-path: inset(50%);
+                width: 1px;
+                height: 1px;
+                white-space: nowrap;
             }
         </style>
     </main>

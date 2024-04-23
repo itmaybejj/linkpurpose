@@ -1,6 +1,6 @@
 ## Accessibility enhancements for links
 
-Link Purpose is a lightweight vanilla JS library that finds and marks links that introduce a change of context:
+*Link Purpose Icons* is a lightweight vanilla JS library that finds and marks links that introduce a change of context:
 
 * <a href="mailto:comments@whitehouse.gov">Opening an email client</a>
 * <a href="tel:555-555-5555">Making a telephone call</a>
@@ -344,6 +344,10 @@ And remember that *your* options array should only contain the keys you want ove
         // For these links, only provide the screen reader help text. e.g. '.in-the-news a'
         hideIcon: '',
         noIconOnImages: '',
+
+        // Make sure the icon does not end up inside these hidden spans in the link.
+        // E.g., <a href>Email <span class="sr-only">J. Smith</span></a>
+        insertIconOutsideHiddenSpan: '.sr-only, .visually-hidden',
 
         // Identify links directly, e.g. "header a, footer a, .my-ok-link".
         // If this is not a valid selector, no links will be flagged.
