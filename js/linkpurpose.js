@@ -356,25 +356,32 @@ class LinkPurpose {
                 let trailingWhitespace = false
                 let parentNode = mark.link
                 let excludedNode = '';
+
+                // Recurses down and back looking for text nodes.
                 while (lastTextNode) {
                   if (lastTextNode.lastChild) {
-                    // There's a span or something here.
+                    // lastChild is NOT a text node AND has descendents.
                     if (lastTextNode.matches(LinkPurpose.options.insertIconOutsideHiddenSpan)) {
-                      // It's a hidden span; go back a node.
+                      // lastChild is hidden; go to previous node if it exists.
                       excludedNode = lastTextNode;
                       lastTextNode = lastTextNode.previousSibling;
                     } else {
-                      // Step down into child node.
+                      // Enter child node. Recurse DOWN.
                       parentNode = lastTextNode
                       lastTextNode = lastTextNode.lastChild
                     }
-                  } else if (lastTextNode.nodeName === '#text' && parentNode.lastElementChild && lastTextNode.textContent.trim().length === 0) {
-                    // Last node was text, but it was whitespace. Step back into previous node.
+                  } else if (
+                    lastTextNode.nodeName === '#text' &&
+                    lastTextNode.textContent.trim().length === 0 && // Whitespace.
+                    parentNode.lastElementChild && // There's an element sibling.
+                    !parentNode.lastElementChild.matches(LinkPurpose.options.insertIconOutsideHiddenSpan) // Prevent recursion.
+                  ) {
+                    // Recurse BACK.
                     trailingWhitespace = lastTextNode
                     parentNode = parentNode.lastElementChild
                     lastTextNode = parentNode.lastChild
                   } else {
-                    // Last node was null or valid text.
+                    // Last node was valid text, or we're giving up.
                     break
                   }
                 }
@@ -390,13 +397,14 @@ class LinkPurpose {
                     if (excludedNode) {
                       breakPreventer.append(excludedNode);
                     }
+                    lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
+                    lastTextNode.parentNode.append(' ',breakPreventer)
                     if (trailingWhitespace) {
-                      breakPreventer.append(trailingWhitespace.textContent)
+                      // Move whitespace out of link.
+                      mark.link.insertAdjacentText('afterend', trailingWhitespace.textContent);
                       // noinspection JSPrimitiveTypeWrapperUsage
                       trailingWhitespace.textContent = ''
                     }
-                    lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                    lastTextNode.parentNode.append(' ',breakPreventer)
                     // Insert the icon into the span rather than the link.
                     spanTarget = breakPreventer
                   }
