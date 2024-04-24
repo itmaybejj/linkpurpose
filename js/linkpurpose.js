@@ -353,35 +353,34 @@ class LinkPurpose {
               if (LinkPurpose.options.purposes[hit.type].iconPosition === 'beforeend') {
                 // Wrap last word in link into a nobreak span.
                 let lastTextNode = mark.link.lastChild
-                let trailingWhitespace = false
-                let parentNode = mark.link
-                let excludedNode = '';
+                let trailingWhitespace = []
+                let excludedNode = [];
 
                 // Recurses down and back looking for text nodes.
+                // This WILL miss if the last element is an empty tree,
+                // but missing is better than moving possibly styled nodes.
                 while (lastTextNode) {
                   if (lastTextNode.lastChild) {
-                    // lastChild is NOT a text node AND has descendents.
+                    // lastChild has descendents (not a text node).
                     if (lastTextNode.matches(LinkPurpose.options.insertIconOutsideHiddenSpan)) {
-                      // lastChild is hidden; go to previous node if it exists.
-                      excludedNode = lastTextNode;
+                      // lastChild is hidden; move to previous sibling.
+                      excludedNode.push(lastTextNode);
                       lastTextNode = lastTextNode.previousSibling;
                     } else {
-                      // Enter child node. Recurse DOWN.
-                      parentNode = lastTextNode
+                      // lastChild is visible, move to descendent node.
                       lastTextNode = lastTextNode.lastChild
                     }
                   } else if (
+                    // lastChild IS text, but only whitespace
                     lastTextNode.nodeName === '#text' &&
-                    lastTextNode.textContent.trim().length === 0 && // Whitespace.
-                    parentNode.lastElementChild && // There's an element sibling.
-                    !parentNode.lastElementChild.matches(LinkPurpose.options.insertIconOutsideHiddenSpan) // Prevent recursion.
+                    lastTextNode.textContent.trim().length === 0 &&
+                    lastTextNode.previousSibling
                   ) {
-                    // Recurse BACK.
-                    trailingWhitespace = lastTextNode
-                    parentNode = parentNode.lastElementChild
-                    lastTextNode = parentNode.lastChild
+                    // Move to previous sibling.
+                    trailingWhitespace.push(lastTextNode);
+                    lastTextNode = lastTextNode.previousSibling;
                   } else {
-                    // Last node was valid text, or we're giving up.
+                    // Last node was valid text or no siblings remain.
                     break
                   }
                 }
@@ -394,16 +393,20 @@ class LinkPurpose {
                     const breakPreventer = document.createElement('span')
                     breakPreventer.classList.add(LinkPurpose.options.noBreakClass)
                     breakPreventer.textContent = lastWord[0].trim()
-                    if (excludedNode) {
-                      breakPreventer.append(excludedNode);
+                    if (excludedNode.length > 0) {
+                      excludedNode.forEach(node => {
+                        breakPreventer.append(node);
+                      })
                     }
                     lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
                     lastTextNode.parentNode.append(' ',breakPreventer)
-                    if (trailingWhitespace) {
+                    if (trailingWhitespace.length > 0) {
                       // Move whitespace out of link.
-                      mark.link.insertAdjacentText('afterend', trailingWhitespace.textContent);
-                      // noinspection JSPrimitiveTypeWrapperUsage
-                      trailingWhitespace.textContent = ''
+                      trailingWhitespace.forEach(space => {
+                        mark.link.insertAdjacentText('afterend', space.textContent);
+                        // noinspection JSPrimitiveTypeWrapperUsage
+                        space.textContent = ''
+                      })
                     }
                     // Insert the icon into the span rather than the link.
                     spanTarget = breakPreventer
