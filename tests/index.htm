@@ -124,6 +124,15 @@
             <h2>Icons not shown</h2>
             <ul>
                 <li>
+                    <a href="https://www.harvard.edu">Specific (https://...) permitted external domain</a>
+                </li>
+                <li>
+                    <a href="https://www.yale.edu">Protocol (//...) external domain</a>
+                </li>
+                <li>
+                    <a href="https://www.dartmouth.edu">Wildcard (*...) external domain</a>
+                </li>
+                <li>
                     <a href="javascript:">JS Href should be ignored</a>
                 </li>
                 <li>
@@ -176,7 +185,7 @@
 
           if (CSS.supports('selector(:is(body))')) {
             const linkPurpose = new LinkPurpose({
-
+              domain: 'https://www.harvard.edu, //www.yale.edu, *dartmouth.edu',
               noReferrer: true,
               noIconOnImages: true,
               purposes: {

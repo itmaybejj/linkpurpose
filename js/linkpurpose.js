@@ -70,7 +70,7 @@ class LinkPurpose {
 
         external: {
           priority: 10,
-          selector: '[href*="https://"], [href^="http://"]', // Protocol prefixes to be tested against the domain.
+          selector: '[href*="https://"], [href^="http://"], [href^="//"]', // Protocol prefixes to be tested against the domain.
           additionalSelector: false, // Links that should always match, e.g. '[href^="/redirect-to/"]'
           newWindow: false,
           message: 'Link is external',
@@ -361,7 +361,7 @@ class LinkPurpose {
                 // but missing is better than moving possibly styled nodes.
                 while (lastTextNode) {
                   if (lastTextNode.lastChild) {
-                    // lastChild has descendents (not a text node).
+                    // lastChild has descendants (not a text node).
                     if (lastTextNode.matches(LinkPurpose.options.insertIconOutsideHiddenSpan)) {
                       // lastChild is hidden; move to previous sibling.
                       excludedNode.push(lastTextNode);
@@ -486,18 +486,27 @@ class LinkPurpose {
       // Convert the container ignore user option to a CSS :not selector.
       LinkPurpose.ignore = LinkPurpose.options.ignore ? `:not(${LinkPurpose.options.ignore}, .${LinkPurpose.options.baseLinkClass})` : `:not(.${LinkPurpose.options.baseLinkClass})`;
       if (LinkPurpose.options.purposes.external.selector && LinkPurpose.options.domain) {
+        // Create specific selector to prevent matching query variables.
         const domains = LinkPurpose.options.domain.split(',');
         let domainNot = '';
         domains.forEach((domain, i) => {
-          if (domain.indexOf('*') === 0) {
-            domainNot += `[href*="${LinkPurpose.options.domain.replace('*', '')}"]`
-          } else if (domain.indexOf('//') === -1) {
-            if (i > 0) {
-              domainNot += ', ';
-            }
-            domainNot += `[href*="https://${LinkPurpose.options.domain}"], [href*="http://${LinkPurpose.options.domain}"], [href^="//${LinkPurpose.options.domain}"]`;
+          domain = domain.trim();
+          if (i > 0) {
+            domainNot += ', ';
+          }
+          if (domain.indexOf('http') === 0) {
+            // Protocol is specified, starts-with selector.
+            domainNot += `[href^="${domain}"]`;
+          } else if (domain.indexOf('*') > -1) {
+            // Wildcards must go to a contains selector
+            domainNot += `[href*="${domain.replaceAll('*', '')}"]`
           } else {
-            domainNot += `[href*="${LinkPurpose.options.domain}"]`;
+            // Unspecified protocol selectors can start with any protocol.
+            if (domain.indexOf('//') === 0) {
+              // Drop before expand to an absolute URL.
+              domain = domain.substring(2);
+            }
+            domainNot += `[href^="https://${domain}"], [href^="http://${domain}"], [href^="//${domain}"]`;
           }
         })
         LinkPurpose.options.purposes.external.selector = `:is(${LinkPurpose.options.purposes.external.selector}):not(${domainNot})`;
