@@ -370,6 +370,7 @@ class LinkPurpose {
                 let lastTextNode = mark.link.lastChild
                 let trailingWhitespace = []
                 let excludedNode = [];
+                let commentNodes = [];
 
                 // Recurses down and back looking for text nodes.
                 // This WILL miss if the last element is an empty tree,
@@ -393,6 +394,11 @@ class LinkPurpose {
                   ) {
                     // Move to previous sibling.
                     trailingWhitespace.push(lastTextNode);
+                    lastTextNode = lastTextNode.previousSibling;
+                  } else if (lastTextNode.nodeName === "#comment") {
+                    // Comment, so move up to previous sibling.
+                    // Capture comment to re-introduce later.
+                    commentNodes.push(lastTextNode);
                     lastTextNode = lastTextNode.previousSibling;
                   } else {
                     // Last node was valid text or no siblings remain.
@@ -422,6 +428,20 @@ class LinkPurpose {
                         // noinspection JSPrimitiveTypeWrapperUsage
                         space.textContent = ''
                       })
+                    }
+                    /* Comments that were found inside of the link while
+                     * traversing up should be retained.
+                     *
+                     * If we do not clone the node and remove the original,
+                     * it somehow strips the <!-- --> from the comment, causing
+                     * it to be visible on the page.  Cloning keep the comment
+                     * in tact.
+                     */
+                    if (commentNodes.length > 0) {
+                      commentNodes.forEach((comment) => {
+                        mark.link.append(comment.cloneNode(true));
+                        comment.remove();
+                      });
                     }
                     // Insert the icon into the span rather than the link.
                     spanTarget = breakPreventer
