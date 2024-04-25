@@ -7,7 +7,6 @@ class LinkPurpose {
   constructor (option) {
     LinkPurpose.version = '1.0.1';
 
-    let initiated = false;
     let checkLinks = [];
     let marks = [];
 
@@ -22,6 +21,8 @@ class LinkPurpose {
 
       // Shadow components inside the root to check within, e.g., 'accordion, spa-content'
       shadowComponents: false,
+      // CSS file to insert into shadow components. e.g., /path/to/linkpurpose.css
+      shadowCSS : false,
 
       // For these links, only provide the screen reader help text. e.g. '.in-the-news a'
       hideIcon: '',
@@ -168,9 +169,25 @@ class LinkPurpose {
 
 
     const startObserver = function (root) {
+
+      // We don't want to nest observers.
+      if (typeof root.closest !== 'function') {
+        if (root.host.matches('.link-purpose-observer')) {
+          return
+        } else {
+          root.host.classList.add('link-purpose-observer');
+        }
+      } else {
+        if (root.closest('.link-purpose-observer')) {
+          return
+        } else {
+          root.classList.add('link-purpose-observer');
+        }
+      }
+
       /*
-    Set up mutation observer for added nodes.
-    */
+      Set up mutation observer for added nodes.
+      */
       // hat tip https://www.joshwcomeau.com/snippets/javascript/debounce/
       const debounce = (callback, wait) => {
         let timeoutId = null;
@@ -205,8 +222,40 @@ class LinkPurpose {
       observer.observe(root, config);
     }
 
-    // QuerySelectAll non-ignored elements within roots, with recursion into shadow components
+    let roots = [];
+
+    const getRoots = function () {
+      let foundRoots = Array.from(document.querySelectorAll(`${LinkPurpose.options.roots}:not(.link-purpose-root)`));
+      if (foundRoots) {
+        foundRoots.forEach(root => {
+          root.classList.add('link-purpose-root');
+        });
+        roots = roots.concat(foundRoots)
+      }
+
+      if (LinkPurpose.options.shadowComponents) {
+        const shadowRoots = Array.from(document.querySelectorAll(`${LinkPurpose.options.shadowComponents}:not(.link-purpose-root)`));
+        if (!shadowRoots) {
+          console.warn('Link Purpose: A specified shadow host has no shadowRoot.')
+          return false
+        }
+        for (let index = 0; index < shadowRoots.length; index++) {
+          if (shadowRoots[index].shadowRoot) {
+            shadowRoots[index].classList.add('link-purpose-root');
+            roots.push(shadowRoots[index].shadowRoot)
+            if (LinkPurpose.options.shadowCSS) {
+              LinkPurpose.attachCSS(shadowRoots[index].shadowRoot);
+            }
+          }
+        }
+      }
+    }
+
     const findLinks = function () {
+      getRoots();
+      if (!roots) {
+        return
+      }
       checkLinks = []
 
       // Check for noRun element.
@@ -220,29 +269,18 @@ class LinkPurpose {
         return
       }
 
-      // Todo: function and parameter to auto-detect shadow components.
-      const shadowSelector = LinkPurpose.options.shadowComponents ? `, ${LinkPurpose.options.shadowComponents}` : '';
-      const selector = `:is(${LinkPurpose.options.baseSelector}${shadowSelector})${LinkPurpose.ignore}`;
+      const selector = `:is(${LinkPurpose.options.baseSelector})${LinkPurpose.ignore}`;
 
-      // Add array of elements matching selector, excluding the provided ignore list.
-      const roots = document.querySelectorAll(LinkPurpose.options.roots);
-      if (!roots) {
-        return
-      }
       if (document.readyState === 'interactive') {
         document.onreadystatechange = () => {
           // Wait to set up observers until after document is complete
           LinkPurpose.run();
         };
       } else {
-        if (!!roots && LinkPurpose.options.watch && !LinkPurpose.options.watching) {
-          if (!initiated) {
-            LinkPurpose.run();
-          }
+        if (!!roots && LinkPurpose.options.watch) {
           roots.forEach(root => {
             startObserver(root);
           })
-          LinkPurpose.options.watching = true;
         }
       }
 
@@ -251,29 +289,6 @@ class LinkPurpose {
         checkLinks = checkLinks.concat(Array.from(root.querySelectorAll(selector)));
       })
 
-      // The initial search may be a mix of elements ('p') and placeholders for shadow hosts ('custom-p-element').
-      // Repeat the search inside each placeholder, and replace the placeholder with its search results.
-      if (LinkPurpose.options.shadowComponents) {
-        const subSelector = `:is(${LinkPurpose.options.baseSelector})${LinkPurpose.options.ignore}`
-        for (let index = checkLinks.length - 1; index >= 0; index--) {
-          if (checkLinks[index].matches(LinkPurpose.options.shadowComponents)) {
-            // Dive into the shadow root and collect an array of its results.
-            let inners;
-            // todo test...
-            if (checkLinks[index].shadowRoot) {
-              inners = checkLinks[index].shadowRoot.querySelectorAll(subSelector)
-            }
-            if (typeof (inners) === 'object' && inners.length > 0) {
-              // Replace shadow host with inner elements.
-              checkLinks.splice(index, 1, ...inners)
-            } else {
-              // Remove shadow host with no inner elements.
-              console.warn('Link Purpose: A specified shadow host has no shadowRoot.')
-              checkLinks.splice(index, 1)
-            }
-          }
-        }
-      }
     }
 
     const processLinks = function () {
@@ -449,7 +464,6 @@ class LinkPurpose {
     }
 
     LinkPurpose.run = () => {
-      initiated = true;
       findLinks()
       processLinks()
       markLinks()
@@ -510,6 +524,28 @@ class LinkPurpose {
           }
         })
         LinkPurpose.options.purposes.external.selector = `:is(${LinkPurpose.options.purposes.external.selector}):not(${domainNot})`;
+      }
+
+      if (LinkPurpose.options.shadowComponents) {
+        if (!LinkPurpose.options.shadowCSS) {
+          const autoCSS = document.querySelector('link[href*="linkpurpose.css"], link[href*="linkpurpose.min.css"]');
+          if (autoCSS) {
+            LinkPurpose.options.shadowCSS = autoCSS.getAttribute('href');
+          }
+        }
+        if (LinkPurpose.options.shadowCSS) {
+          let cssBundle = document.createElement('div');
+          cssBundle.setAttribute('hidden','');
+          let cssLink = document.createElement('link');
+          cssLink.setAttribute('rel', 'stylesheet');
+          cssLink.setAttribute('media', 'all');
+          cssLink.setAttribute('href', LinkPurpose.options.shadowCSS + '?v=' + LinkPurpose.version);
+          cssBundle.append(cssLink);
+
+          LinkPurpose.attachCSS = function(appendTo) {
+            appendTo.appendChild(cssBundle.cloneNode(true));
+          };
+        }
       }
 
       LinkPurpose.run()

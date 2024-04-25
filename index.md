@@ -249,7 +249,10 @@ ignore: '.purchase-links a, .external-resources a',
 
 ### Check within Web components
 ```js
-shadowComponents: 'fancy-widget, tab-panel',
+// Selector for component
+shadowComponents: 'fancy-widget, tab-panel', 
+// CSS file to insert into shadow components. e.g., /path/to/linkpurpose.css
+shadowCSS : false,
 ```
 &nbsp;
 
@@ -340,6 +343,8 @@ And remember that *your* options array should only contain the keys you want ove
 
         // Shadow components inside the root to check within, e.g., 'accordion, spa-content'
         shadowComponents: false,
+        // CSS file to insert into shadow components. e.g., /path/to/linkpurpose.css
+        shadowCSS : false,
 
         // For these links, only provide the screen reader help text. e.g. '.in-the-news a'
         hideIcon: '',

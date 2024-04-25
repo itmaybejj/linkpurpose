@@ -168,9 +168,11 @@
                 <a href="/" download target="_blank"> <span class="visually-hidden" style="opacity: .25;"> </span> </a>
                 <a href="/" download target="_blank"><span class="visually-hidden" style="opacity: .25;"></span></a>
                 <a href="/" download target="_blank"></a>
-
             </li>
             </ul>
+        </div>
+        <div>
+            <shadow-test></shadow-test>
         </div>
 
 
@@ -183,11 +185,30 @@
         <!--suppress JSUnusedGlobalSymbols -->
         <script>
 
+          class shadowTest extends HTMLElement {
+            constructor() {
+              super();
+            }
+            connectedCallback() {
+              if (!this.initialized) {
+                const shadow = this.attachShadow({mode: 'open'});
+                let wrapper = document.createElement('div');
+                wrapper.setAttribute('class','wrapper');
+                wrapper.innerHTML = `<a href="https://www.princeton.edu">External link in the shadow DOM</a>`
+                shadow.appendChild(wrapper);
+                this.initialized = true;
+              }
+            }
+          }
+          customElements.define('shadow-test', shadowTest);
+
           if (CSS.supports('selector(:is(body))')) {
             const linkPurpose = new LinkPurpose({
               domain: 'https://www.harvard.edu, //www.yale.edu, *dartmouth.edu',
               noReferrer: true,
               noIconOnImages: true,
+              shadowComponents: 'shadow-test',
+              //watch: false,
               purposes: {
                 spreadsheet: {
                   priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
