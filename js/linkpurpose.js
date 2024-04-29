@@ -5,7 +5,7 @@ class LinkPurpose {
   // ESLint config
 
   constructor (option) {
-    LinkPurpose.version = '1.0.1';
+    LinkPurpose.version = '1.0.2';
 
     let checkLinks = [];
     let marks = [];
@@ -429,16 +429,10 @@ class LinkPurpose {
                         space.textContent = ''
                       })
                     }
-                    /* Comments that were found inside of the link while
-                     * traversing up should be retained.
-                     *
-                     * If we do not clone the node and remove the original,
-                     * it somehow strips the <!-- --> from the comment, causing
-                     * it to be visible on the page.  Cloning keep the comment
-                     * in tact.
-                     */
+                    // HTML comments inside the link should retain relative position.
                     if (commentNodes.length > 0) {
                       commentNodes.forEach((comment) => {
+                        // Clone to be sure comment wrapper moves.
                         mark.link.append(comment.cloneNode(true));
                         comment.remove();
                       });
