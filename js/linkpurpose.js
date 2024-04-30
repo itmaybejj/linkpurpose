@@ -348,9 +348,11 @@ class LinkPurpose {
       marks.forEach((mark) => {
         mark.hits.forEach((hit, i) => {
           // Don't append redundant screen reader text.
+          // If no message exists, don't show it either.
           let showText = !(LinkPurpose.options.purposes[hit.type].redundantStrings &&
             mark.link.textContent.length > 0 &&
-            mark.link.textContent.match(LinkPurpose.options.purposes[hit.type].redundantStrings));
+            mark.link.textContent.match(LinkPurpose.options.purposes[hit.type].redundantStrings)) &&
+            LinkPurpose.options.purposes[hit.type].message
 
           if (i === 0) {
             let spanTarget = mark.link
