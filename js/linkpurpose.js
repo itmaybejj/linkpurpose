@@ -422,7 +422,7 @@ class LinkPurpose {
                       })
                     }
                     lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                    lastTextNode.parentNode.append(' ',breakPreventer)
+                    lastTextNode.parentNode.append('\u00A0', breakPreventer)
                     if (trailingWhitespace.length > 0) {
                       // Move whitespace out of link.
                       trailingWhitespace.forEach(space => {
