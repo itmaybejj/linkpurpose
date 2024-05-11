@@ -348,9 +348,11 @@ class LinkPurpose {
       marks.forEach((mark) => {
         mark.hits.forEach((hit, i) => {
           // Don't append redundant screen reader text.
+          // If no message exists, don't show it either.
           let showText = !(LinkPurpose.options.purposes[hit.type].redundantStrings &&
             mark.link.textContent.length > 0 &&
-            mark.link.textContent.match(LinkPurpose.options.purposes[hit.type].redundantStrings));
+            mark.link.textContent.match(LinkPurpose.options.purposes[hit.type].redundantStrings)) &&
+            LinkPurpose.options.purposes[hit.type].message
 
           if (i === 0) {
             let spanTarget = mark.link
@@ -420,7 +422,7 @@ class LinkPurpose {
                       })
                     }
                     lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                    lastTextNode.parentNode.append(' ',breakPreventer)
+                    lastTextNode.parentNode.append('\u00A0', breakPreventer)
                     if (trailingWhitespace.length > 0) {
                       // Move whitespace out of link.
                       trailingWhitespace.forEach(space => {
