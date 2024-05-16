@@ -47,3 +47,7 @@
 .link-purpose-text:empty {
     display: none;
 }
+
+.link-purpose-space {
+  white-space: pre-wrap;
+}

@@ -52,6 +52,8 @@ class LinkPurpose {
       // Mask headers when users click out to external links
       noReferrer: false,
 
+      fixFlexSpacing: false,
+
       purposes: {
 
         // These are listed in priority order
@@ -422,7 +424,7 @@ class LinkPurpose {
                       })
                     }
                     lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                    lastTextNode.parentNode.append('\u00A0', breakPreventer)
+                    lastTextNode.parentNode.append(' ', breakPreventer)
                     if (trailingWhitespace.length > 0) {
                       // Move whitespace out of link.
                       trailingWhitespace.forEach(space => {
@@ -456,6 +458,17 @@ class LinkPurpose {
                   iconSpan.classList.add(cls)
                 })
               }
+
+              // If we're to fix flex issues with the last space before the
+              // no-break span, we create a new div that handles the space.
+              // Reference: https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
+              if (LinkPurpose.options.fixFlexSpacing) {
+                const spaceSpan = document.createElement('span')
+                spaceSpan.classList.add('link-purpose-space')
+                spaceSpan.textContent = ' ';
+                spanTarget.insertAdjacentElement('beforebegin', spaceSpan);
+              }
+
               spanTarget.insertAdjacentElement(LinkPurpose.options.purposes[hit.type].iconPosition, iconSpan);
             } else {
               mark.link.classList.add(LinkPurpose.options.baseLinkClass)
