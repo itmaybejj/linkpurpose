@@ -5,7 +5,7 @@ class LinkPurpose {
   // ESLint config
 
   constructor (option) {
-    LinkPurpose.version = '1.0.2';
+    LinkPurpose.version = '1.0.3';
 
     let checkLinks = [];
     let marks = [];
@@ -71,7 +71,7 @@ class LinkPurpose {
 
         external: {
           priority: 10,
-          selector: '[href*="https://"], [href^="http://"], [href^="//"]', // Protocol prefixes to be tested against the domain.
+          selector: '[href^="https://"], [href^="http://"], [href^="//"]', // Protocol prefixes to be tested against the domain.
           additionalSelector: false, // Links that should always match, e.g. '[href^="/redirect-to/"]'
           newWindow: false,
           message: 'Link is external',
@@ -113,7 +113,7 @@ class LinkPurpose {
         // Ref www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
         app: {
           priority: 90, // Unknown protocols generally win.
-          selector: ':is([href*="://"]):not([href^="https:"], [href^="http:"], [href^="file:"])',
+          selector: ':is([href*="://"]):not([href^="/"], [href^="https:"], [href^="http:"], [href^="file:"])', // Extra leading / is for internet archive links
           additionalSelector: false,
           newWindow: false,
           message: 'Link opens app',
@@ -413,6 +413,9 @@ class LinkPurpose {
                   const lastWord = lastText.match(lastWordRegex)
                   if (lastWord !== null) {
                     // Wrap the last word in a span.
+                    const spacer = document.createElement('span');
+                    spacer.classList.add('link-purpose-spacer');
+                    spacer.textContent = '\u0020';
                     const breakPreventer = document.createElement('span')
                     breakPreventer.classList.add(LinkPurpose.options.noBreakClass)
                     breakPreventer.textContent = lastWord[0].trim()
@@ -422,7 +425,7 @@ class LinkPurpose {
                       })
                     }
                     lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                    lastTextNode.parentNode.append('\u00A0', breakPreventer)
+                    lastTextNode.parentNode.append(spacer, breakPreventer)
                     if (trailingWhitespace.length > 0) {
                       // Move whitespace out of link.
                       trailingWhitespace.forEach(space => {

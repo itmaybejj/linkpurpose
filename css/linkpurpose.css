@@ -1,3 +1,6 @@
+.link-purpose-spacer {
+    white-space: pre-wrap;
+}
 .link-purpose-nobreak {
     white-space: nowrap;
 }
