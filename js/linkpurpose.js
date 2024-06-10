@@ -340,6 +340,10 @@ class LinkPurpose {
       })
     }
 
+    const spacer = document.createElement('span');
+    spacer.classList.add('link-purpose-spacer');
+    spacer.textContent = '\u0020';
+
     const markLinks = function () {
       if (!marks) {
         return
@@ -411,11 +415,8 @@ class LinkPurpose {
                   const lastText = lastTextNode.textContent
                   const lastWordRegex = /\s*\S+\s*$/g
                   const lastWord = lastText.match(lastWordRegex)
-                  if (lastWord !== null) {
+                  if (lastWord) {
                     // Wrap the last word in a span.
-                    const spacer = document.createElement('span');
-                    spacer.classList.add('link-purpose-spacer');
-                    spacer.textContent = '\u0020';
                     const breakPreventer = document.createElement('span')
                     breakPreventer.classList.add(LinkPurpose.options.noBreakClass)
                     breakPreventer.textContent = lastWord[0].trim()
@@ -424,8 +425,15 @@ class LinkPurpose {
                         breakPreventer.append(node);
                       })
                     }
-                    lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                    lastTextNode.parentNode.append(spacer, breakPreventer)
+                    if (lastWord[0].length !== lastText.length) {
+                      // Only wrap last string, and insert a controlled width spacer.
+                      lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
+                      lastTextNode.parentNode.append(spacer.cloneNode(true), breakPreventer)
+                    } else {
+                      // Wrap entire textContent.
+                      lastTextNode.textContent = '';
+                      lastTextNode.parentNode.append(breakPreventer)
+                    }
                     if (trailingWhitespace.length > 0) {
                       // Move whitespace out of link.
                       trailingWhitespace.forEach(space => {
