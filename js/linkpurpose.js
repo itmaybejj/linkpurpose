@@ -343,6 +343,9 @@ class LinkPurpose {
     const spacer = document.createElement('span');
     spacer.classList.add('link-purpose-spacer');
     spacer.textContent = '\u0020';
+    const lastWordRegex = /\s*\S+\s*$/g;
+    const initialSpaceRegex = /^\s+/g;
+    const trailingSpaceRegex = /\s+$/g;
 
     const markLinks = function () {
       if (!marks) {
@@ -374,7 +377,7 @@ class LinkPurpose {
               if (LinkPurpose.options.purposes[hit.type].iconPosition === 'beforeend') {
                 // Wrap last word in link into a nobreak span.
                 let lastTextNode = mark.link.lastChild
-                let trailingWhitespace = []
+                let trailingSpaceNodes = []
                 let excludedNode = [];
                 let commentNodes = [];
 
@@ -399,7 +402,7 @@ class LinkPurpose {
                     lastTextNode.previousSibling
                   ) {
                     // Move to previous sibling.
-                    trailingWhitespace.push(lastTextNode);
+                    trailingSpaceNodes.push(lastTextNode);
                     lastTextNode = lastTextNode.previousSibling;
                   } else if (lastTextNode.nodeName === "#comment") {
                     // Comment, so move up to previous sibling.
@@ -413,34 +416,42 @@ class LinkPurpose {
                 }
                 if (lastTextNode && lastTextNode.nodeName === '#text' && lastTextNode.textContent.length > 0) {
                   const lastText = lastTextNode.textContent
-                  const lastWordRegex = /\s*\S+\s*$/g
                   const lastWord = lastText.match(lastWordRegex)
                   if (lastWord) {
+                    const onlyWord = lastWord[0].length === lastText.length;
+                    const leadingSpace = onlyWord ? lastText.match(initialSpaceRegex) : false;
+                    let trailingSpace = lastText.match(trailingSpaceRegex);
                     // Wrap the last word in a span.
                     const breakPreventer = document.createElement('span')
                     breakPreventer.classList.add(LinkPurpose.options.noBreakClass)
-                    breakPreventer.textContent = lastWord[0].trim()
+                    breakPreventer.textContent = lastWord[0].trim();
                     if (excludedNode.length > 0) {
                       excludedNode.forEach(node => {
                         breakPreventer.append(node);
                       })
                     }
-                    if (lastWord[0].length !== lastText.length) {
-                      // Only wrap last string, and insert a controlled width spacer.
-                      lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                      lastTextNode.parentNode.append(spacer.cloneNode(true), breakPreventer)
-                    } else {
+                    if (onlyWord) {
                       // Wrap entire textContent.
                       lastTextNode.textContent = '';
                       lastTextNode.parentNode.append(breakPreventer)
+                    } else {
+                      // Only wrap last string, and insert a controlled width spacer.
+                      lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
+                      lastTextNode.parentNode.append(spacer.cloneNode(true), breakPreventer)
                     }
-                    if (trailingWhitespace.length > 0) {
+                    if (leadingSpace) {
+                      mark.link.insertAdjacentText('beforebegin', '\u0020');
+                    }
+                    if (trailingSpaceNodes.length > 0) {
+                      trailingSpace = true;
                       // Move whitespace out of link.
-                      trailingWhitespace.forEach(space => {
-                        mark.link.insertAdjacentText('afterend', space.textContent);
+                      trailingSpaceNodes.forEach(space => {
                         // noinspection JSPrimitiveTypeWrapperUsage
                         space.textContent = ''
                       })
+                    }
+                    if (trailingSpace) {
+                      mark.link.insertAdjacentText('afterend', '\u0020');
                     }
                     // HTML comments inside the link should retain relative position.
                     if (commentNodes.length > 0) {
