@@ -33,14 +33,14 @@
   margin: 0 .1875em;
 }
 .link-purpose-text {
-    position: absolute;
-    bottom: 0;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    width: 1px;
-    height: 1px;
-    white-space: nowrap;
+    position: absolute !important;
+    bottom: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    width: 1px !important;
+    height: 1px !important;
+    white-space: nowrap !important;
 }
 
 .link-purpose-hide-on-image :is(img, figure, svg) ~ .link-purpose-icon,
