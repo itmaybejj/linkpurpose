@@ -1,46 +1,46 @@
 .link-purpose-spacer {
-    white-space: pre-wrap;
+  white-space: pre-wrap;
 }
 .link-purpose-nobreak {
-    white-space: nowrap;
+  white-space: nowrap;
 }
 .link-purpose-icon {
-    display: inline-block;
-    width: .917em;
-    height: .917em;
-    min-height: 9px;
-    margin: 0 .25em;
-    font-size: .75em;
+  display: inline-block;
+  width: .917em;
+  height: .917em;
+  min-height: 9px;
+  margin: 0 .25em;
+  font-size: .75em;
 }
 .link-purpose-icon.svg-inline--fa {
-    vertical-align: initial;
+  vertical-align: initial;
 }
 .link-purpose-external-icon {
-    height: .875em;
+  height: .875em;
 }
 .link-purpose-mail-icon .linkpurpose-default-svg {
-    transform: translateY(2px);
+  transform: translateY(2px);
 }
 .link-purpose-document-icon .linkpurpose-default-svg {
-    transform: none;
+  transform: none;
 }
 .link-purpose-icon svg {
-    width: 100%;
-    height: 100%;
-    vertical-align: initial;
+  width: 100%;
+  height: 100%;
+  vertical-align: initial;
 }
 .link-purpose-icon.svg-inline--fa {
-  margin: 0 .1875em;
+  margin: 0 0.1875em;
 }
 .link-purpose-text {
-    position: absolute !important;
-    bottom: 0 !important;
-    overflow: hidden !important;
-    clip: rect(0 0 0 0) !important;
-    clip-path: inset(50%) !important;
-    width: 1px !important;
-    height: 1px !important;
-    white-space: nowrap !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  width: 1px !important;
+  height: 1px !important;
+  white-space: nowrap !important;
 }
 
 .link-purpose-hide-on-image :is(img, figure, svg) ~ .link-purpose-icon,
@@ -48,5 +48,5 @@
 .link-purpose-hide-on-image *:has(img, svg, figure) ~ .link-purpose-icon,
 .link-purpose-hide-on-image *:has(img, svg, figure) ~ .link-purpose-nobreak .link-purpose-icon,
 .link-purpose-text:empty {
-    display: none;
+  display: none;
 }
