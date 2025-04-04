@@ -417,7 +417,8 @@ class LinkPurpose {
                 if (lastTextNode && lastTextNode.nodeName === '#text' && lastTextNode.textContent.length > 0) {
                   const lastText = lastTextNode.textContent
                   const lastWord = lastText.match(lastWordRegex)
-                  if (lastWord) {
+                  if (lastWord && lastWord[0].length < 30) {
+                    // 30-char limit prevents horizontal scrollbars from urls.
                     const onlyWord = lastWord[0].length === lastText.length;
                     const leadingSpace = onlyWord ? lastText.match(initialSpaceRegex) : false;
                     let trailingSpace = lastText.match(trailingSpaceRegex);
