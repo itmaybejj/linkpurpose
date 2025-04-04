@@ -5,7 +5,7 @@ class LinkPurpose {
   // ESLint config
 
   constructor (option) {
-    LinkPurpose.version = '1.0.3';
+    LinkPurpose.version = '1.0.5';
 
     let checkLinks = [];
     let marks = [];
