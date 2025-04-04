@@ -104,8 +104,8 @@ And that's it.
 You only have to list options you want to override; any "missing" keys will fall back to the defaults.
 
 
-### Custom icons via inline SVG
-This is the default icon type, so you just need to provide the SVG you want overridden. E.g.:
+### Custom icons via inline markup
+This is the default icon type, so you just need to provide the markup you want for the icon. E.g. to provide an image directly:
 ```html
 <script>
     const linkPurpose = new LinkPurpose({
@@ -119,6 +119,18 @@ This is the default icon type, so you just need to provide the SVG you want over
     })
 </script>
 ```
+&nbsp;
+
+Or provide the markup to be replaced by [Material Icons](https://fonts.google.com/icons):
+```js
+purposes: {
+  download: {
+    iconHTML: '<span class="material-symbols-outlined">sentiment_satisfied </span>',
+  },
+},
+
+```
+
 
 &nbsp;
 
@@ -155,28 +167,26 @@ purposes: {
     },
 }
 ```
-
 &nbsp;
 
-### Text-based icon fonts (e.g. Material)
+If no classes are specified, [FontAwesome](https://fontawesome.com/docs/web/setup/get-started) classes that match the default SVGs will be inserted.
 
-If no classes are specified, the [FontAwesome](https://fontawesome.com/docs/web/setup/get-started) classes that match the default SVGs will be inserted.
-
-Specify custom classes with the iconClasses key. This would make a [smiley face](https://fontawesome.com/icons/smile?f=classic&s=regular):
+Specify custom classes with the iconClasses key. This would change the download icon to a [smiley face](https://fontawesome.com/icons/smile?f=classic&s=regular):
 ```js
 purposes: {
   download: {
-    iconHTML: '<span class="material-symbols-outlined">download</span>',
+    iconType: 'classes',
+    iconClasses: ['fa-regular', 'fa-face-smile'],
   },
-  // etc.
 },
 
 ```
 
 &nbsp;
 
-### Custom icons via CSS
-Switch the iconType to classes, and provide your icons via CSS pseudo-elements or background images. E.g.:
+
+### Custom icons via your theme CSS
+Switch the iconType to "classes," and provide your icons via CSS pseudo-elements or background images. E.g.:
 
 ```css
 /* Applies to mailto */
