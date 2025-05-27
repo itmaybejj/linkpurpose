@@ -4,6 +4,9 @@
 .link-purpose-nobreak {
   white-space: nowrap;
 }
+.link-purpose-last-word {
+  gap: 0;
+}
 .link-purpose-icon {
   display: inline-block;
   width: .917em;
@@ -33,14 +36,7 @@
   margin: 0 0.1875em;
 }
 .link-purpose-text {
-  position: absolute !important;
-  bottom: 0 !important;
-  overflow: hidden !important;
-  clip: rect(0 0 0 0) !important;
-  clip-path: inset(50%) !important;
-  width: 1px !important;
-  height: 1px !important;
-  white-space: nowrap !important;
+  display: none !important;
 }
 
 .link-purpose-hide-on-image :is(img,
@@ -54,7 +50,6 @@ svg,
 figure) ~ .link-purpose-icon,
 .link-purpose-hide-on-image *:has(img,
 svg,
-figure) ~ .link-purpose-nobreak .link-purpose-icon,
-.link-purpose-text:empty {
+figure) ~ .link-purpose-nobreak .link-purpose-icon {
   display: none;
 }

@@ -128,7 +128,7 @@
             </section>
         </div>
         <div id="negative">
-            <h2>Icons not shown</h2>
+            <h2>Links not matched</h2>
             <ul>
                 <li>
                     <a href="https://www.harvard.edu">Specific (https://...) permitted external domain</a>
@@ -147,22 +147,35 @@
                 </li>
             </ul>
         </div>
-        <div id="positive">
+        <div id="outside-hidden">
             <h2>Icons inserted outside of a hidden element</h2>
             <ul>
                 <li>
-                    <a href="/" download target="_blank">Icon should be inserted inside this <span class="not-visually-hidden" style="opacity: .35;">hidden span not in the match list</span></a>
+                    <a href="/" download target="_blank">Icon will be inserted inside this <span class="not-visually-hidden" style="opacity: .35;">hidden span not in the match list</span></a>
                 </li>
                 <li>
-                    <a href="/" download target="_blank">Hidden span should move into nobreak: <span class="visually-hidden" style="opacity: .25;">hidden span</span> <span class="visually-hidden" style="opacity: .25;">Hidden span is nested and will not move: </span> <span class="visually-hidden" style="opacity: .25;">hidden span</span></a>
+                    <a href="/" download target="_blank">This hidden span is on match list and should move into nobreak: <span class="visually-hidden" style="opacity: .25;">hidden span</span> <span class="visually-hidden" style="opacity: .25;">Hidden span is nested: </span> <span class="visually-hidden" style="opacity: .25;">hidden span</span></a>
                 </li>
                 <li>
-                    <a href="/" download target="_blank">Icon should be inserted after this <span><span class="visually-hidden" style="opacity: .25;">nested hidden span</span></span></a>
+                    <a href="/" download target="_blank">Matched hidden span is nested, no-break doesn't work right <span><span class="visually-hidden" style="opacity: .25;">nested hidden span</span></span></a>
                 </li>
 
             </ul>
         </div>
-        <div id="positive">
+        <div id="suppress-nobreak">
+            <h2>Suppress no-break</h2>
+            <ul>
+                <li><a href="/" download="">This should not have a nobreak</a></li>
+            </ul>
+        </div>
+        <div id="extra-description">
+            <h2 id="already-described">Link already has describedby attribute</h2>
+            <ul>
+                <li><a href="/" download="" aria-describedby="already-described">Existing aria-describedby will stack in ID list</a></li>
+                <li><a href="/" download="" aria-description="already-described">Existing aria-description will mirror into text</a></li>
+            </ul>
+        </div>
+        <div id="trimming">
             <h2>Trimming and tree walking</h2>
             <ul><li>
                 <h2 class="block-heading"><a href="/" download="">Digital Accessibility?&nbsp; &ensp; &hairsp; &thinsp;
@@ -222,6 +235,7 @@
               noReferrer: true,
               noIconOnImages: true,
               shadowComponents: 'shadow-test',
+              suppressNoBreak: '#suppress-nobreak a',
               //watch: false,
               purposes: {
                 spreadsheet: {
@@ -249,10 +263,10 @@
                 padding: 2rem 5%;
             }
             .link-purpose-nobreak {
-                background: bisque;
+                outline: 1px dotted;
             }
             .link-purpose-spacer {
-                background: burlywood;
+                background: cadetblue;
             }
             a:hover {
                 color: wheat;
@@ -274,6 +288,16 @@
                 height: 1px;
                 white-space: nowrap;
             }
+            /* debug, but duplicates reading in screen readers */
+            /*
+            .link-purpose-text {
+              display: inline-block !important;
+              outline: 1px solid gray;
+              color: gray;
+              font-style: italic;
+              font-size: 12px;
+              margin: 0 6px;
+            }*/
         </style>
     </main>
 </body>

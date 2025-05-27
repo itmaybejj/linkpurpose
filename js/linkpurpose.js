@@ -5,10 +5,11 @@ class LinkPurpose {
   // ESLint config
 
   constructor (option) {
-    LinkPurpose.version = '1.0.5';
+    LinkPurpose.version = '1.0.6';
 
     let checkLinks = [];
     let marks = [];
+    LinkPurpose.unique = 0;
 
     const defaultOptions = {
 
@@ -27,6 +28,10 @@ class LinkPurpose {
       // For these links, only provide the screen reader help text. e.g. '.in-the-news a'
       hideIcon: '',
       noIconOnImages: '',
+
+      // For these links, skip the nobreak wrapper.
+      // Provide exact match selectors, e.g. "#child-select a, .direct-select"
+      suppressNoBreak: false,
 
       // Make sure the icon does not end up inside these hidden spans in the link.
       // E.g., <a href>Email <span class="sr-only">J. Smith</span></a>
@@ -312,7 +317,8 @@ class LinkPurpose {
               // No existing hit.
               hits.push({
                 type: key,
-                noReferrer: key === 'external' && LinkPurpose.options.noReferrer
+                noReferrer: key === 'external' && LinkPurpose.options.noReferrer,
+                suppressNoBreak: LinkPurpose.options.suppressNoBreak && link.matches(LinkPurpose.options.suppressNoBreak)
               })
             } else if (value.priority > LinkPurpose.options.purposes[hits[0].type].priority) {
               // New hit is higher priority than existing hit.
@@ -354,6 +360,7 @@ class LinkPurpose {
 
       marks.forEach((mark) => {
         mark.hits.forEach((hit, i) => {
+          LinkPurpose.unique++;
           // Don't append redundant screen reader text.
           // If no message exists, don't show it either.
           let showText = !(LinkPurpose.options.purposes[hit.type].redundantStrings &&
@@ -374,7 +381,7 @@ class LinkPurpose {
                 mark.link.classList.add('link-purpose-hide-on-image')
               }
 
-              if (LinkPurpose.options.purposes[hit.type].iconPosition === 'beforeend') {
+              if (!hit.suppressNoBreak && LinkPurpose.options.purposes[hit.type].iconPosition === 'beforeend') {
                 // Wrap last word in link into a nobreak span.
                 let lastTextNode = mark.link.lastChild
                 let trailingSpaceNodes = []
@@ -424,7 +431,6 @@ class LinkPurpose {
                     let trailingSpace = lastText.match(trailingSpaceRegex);
                     // Wrap the last word in a span.
                     const breakPreventer = document.createElement('span')
-                    breakPreventer.classList.add(LinkPurpose.options.noBreakClass)
                     breakPreventer.textContent = lastWord[0].trim();
                     if (excludedNode.length > 0) {
                       excludedNode.forEach(node => {
@@ -433,10 +439,12 @@ class LinkPurpose {
                     }
                     if (onlyWord) {
                       // Wrap entire textContent.
+                      breakPreventer.classList.add('link-purpose-last-word')
                       lastTextNode.textContent = '';
-                      lastTextNode.parentNode.append(breakPreventer)
+                      lastTextNode.parentNode.append(breakPreventer);
                     } else {
                       // Only wrap last string, and insert a controlled width spacer.
+                      breakPreventer.classList.add(LinkPurpose.options.noBreakClass, 'link-purpose-last-word')
                       lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
                       lastTextNode.parentNode.append(spacer.cloneNode(true), breakPreventer)
                     }
@@ -489,11 +497,35 @@ class LinkPurpose {
             if (LinkPurpose.options.hiddenTextClass) {
               iconText.classList.add(LinkPurpose.options.hiddenTextClass);
             }
-            iconText.textContent = showText ? `(${LinkPurpose.options.purposes[hit.type].message})` : '';
+            iconText.setAttribute('id', `link-purpose-description-${LinkPurpose.unique}`)
             spanTarget.append(iconText);
+            if (showText) {
+              if (mark.link.hasAttribute('aria-describedby')) {
+                // multiple IDs, simple text
+                mark.link.setAttribute('aria-describedby', `${mark.link.getAttribute('aria-describedby')} link-purpose-description-${LinkPurpose.unique}`);
+                iconText.textContent = ` (${LinkPurpose.options.purposes[hit.type].message})`;
+              } else if (mark.link.hasAttribute('aria-description')) {
+                // single ID, merged text
+                mark.link.setAttribute('aria-describedby', `link-purpose-description-${LinkPurpose.unique}`);
+                iconText.textContent = `${mark.link.getAttribute('aria-description')} (${LinkPurpose.options.purposes[hit.type].message})`;
+              } else {
+                // single ID, single text
+                mark.link.setAttribute('aria-describedby', `link-purpose-description-${LinkPurpose.unique}`);
+                iconText.textContent = ` (${LinkPurpose.options.purposes[hit.type].message})`;
+              }
+            }
+
           } else if (showText) {
+            if (!mark.link.hasAttribute('aria-describedby')) {
+              mark.link.setAttribute('aria-describedby', `link-purpose-description-${LinkPurpose.unique}`);
+            } else if (mark.link.getAttribute('aria-describedby') !== `link-purpose-description-${LinkPurpose.unique}`) {
+              // Multiple hits, stack descriptions.
+              mark.link.setAttribute('aria-describedby', `${mark.link.getAttribute('aria-describedby')} link-purpose-description-${LinkPurpose.unique}`);
+            }
             const iconText = mark.link.querySelector('.link-purpose-text')
-            iconText.textContent = iconText.textContent + ` (${LinkPurpose.options.purposes[hit.type].message})`
+            iconText.textContent = iconText.textContent ?
+              ` ${iconText.textContent}, (${LinkPurpose.options.purposes[hit.type].message})` :
+              `(${LinkPurpose.options.purposes[hit.type].message})`
           }
           if (LinkPurpose.options.purposes[hit.type].newWindow) {
             mark.link.setAttribute('target', '_blank')
@@ -508,17 +540,15 @@ class LinkPurpose {
       markLinks()
     }
 
-
-
     init(() => {
       // Runs once on load
 
-      // Shallow merge
+      // Merge top level items
       LinkPurpose.options = {
         ...defaultOptions,
         ...option
       };
-      // Deep merge
+      // Deep merge nested items
       if (typeof (option) === 'object' && 'purposes' in option) {
         for (const property in defaultOptions.purposes) {
           if (property in option.purposes) {
