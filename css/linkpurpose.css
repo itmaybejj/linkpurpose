@@ -2,6 +2,7 @@
   white-space: pre-wrap;
 }
 .link-purpose-nobreak {
+  min-width: .125em;
   white-space: nowrap;
 }
 .link-purpose-last-word {

@@ -5,7 +5,7 @@ class LinkPurpose {
   // ESLint config
 
   constructor (option) {
-    LinkPurpose.version = '1.0.6';
+    LinkPurpose.version = '1.0.7';
 
     let checkLinks = [];
     let marks = [];
@@ -539,6 +539,7 @@ class LinkPurpose {
       })
 
       // Remove nobreak class if it expanded the link container.
+      // This is slow, so only bother for words longer than 8 characters.
       marks.forEach((mark) => {
         if (mark.originalWidth && mark.fontSize && mark.breakPreventer &&
           mark.lastWordLength && mark.lastWordLength > 8 &&
