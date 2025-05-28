@@ -1,8 +1,8 @@
 .link-purpose-spacer {
   white-space: pre-wrap;
+  min-width: .125em;
 }
 .link-purpose-nobreak {
-  min-width: .125em;
   white-space: nowrap;
 }
 .link-purpose-last-word {
