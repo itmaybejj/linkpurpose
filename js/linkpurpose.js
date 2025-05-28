@@ -337,11 +337,16 @@ class LinkPurpose {
         }
         if (hits.length !== 0) {
           const showIcon = !(LinkPurpose.options.hideIcon && link.matches(LinkPurpose.options.hideIcon));
-          marks.push({
+          const hitData = {
             link: link,
             hits: hits,
             showIcon: showIcon
-          })
+          }
+          if (showIcon && link.parentElement) {
+            hitData.fontSize = parseInt(window.getComputedStyle(link).fontSize);
+            hitData.originalWidth = link.parentElement.getBoundingClientRect().width;
+          }
+          marks.push(hitData)
         }
       })
     }
@@ -426,27 +431,27 @@ class LinkPurpose {
                   const lastWord = lastText.match(lastWordRegex)
                   if (lastWord && lastWord[0].length < 30) {
                     // 30-char limit prevents horizontal scrollbars from urls.
-                    const onlyWord = lastWord[0].length === lastText.length;
+                    mark.lastWordLength = lastWord[0].length
+                    const onlyWord = mark.lastWordLength === lastText.length;
                     const leadingSpace = onlyWord ? lastText.match(initialSpaceRegex) : false;
                     let trailingSpace = lastText.match(trailingSpaceRegex);
                     // Wrap the last word in a span.
-                    const breakPreventer = document.createElement('span')
-                    breakPreventer.textContent = lastWord[0].trim();
+                    mark.breakPreventer = document.createElement('span')
+                    mark.breakPreventer.textContent = lastWord[0].trim();
+                    mark.breakPreventer.classList.add(LinkPurpose.options.noBreakClass, 'link-purpose-last-word')
                     if (excludedNode.length > 0) {
                       excludedNode.forEach(node => {
-                        breakPreventer.append(node);
+                        mark.breakPreventer.append(node);
                       })
                     }
                     if (onlyWord) {
                       // Wrap entire textContent.
-                      breakPreventer.classList.add('link-purpose-last-word')
                       lastTextNode.textContent = '';
-                      lastTextNode.parentNode.append(breakPreventer);
+                      lastTextNode.parentNode.append(mark.breakPreventer);
                     } else {
                       // Only wrap last string, and insert a controlled width spacer.
-                      breakPreventer.classList.add(LinkPurpose.options.noBreakClass, 'link-purpose-last-word')
                       lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                      lastTextNode.parentNode.append(spacer.cloneNode(true), breakPreventer)
+                      lastTextNode.parentNode.append(spacer.cloneNode(true), mark.breakPreventer)
                     }
                     if (leadingSpace) {
                       mark.link.insertAdjacentText('beforebegin', '\u0020');
@@ -471,7 +476,7 @@ class LinkPurpose {
                       });
                     }
                     // Insert the icon into the span rather than the link.
-                    spanTarget = breakPreventer
+                    spanTarget = mark.breakPreventer
                   }
                 }
               }
@@ -531,6 +536,16 @@ class LinkPurpose {
             mark.link.setAttribute('target', '_blank')
           }
         })
+      })
+
+      // Remove nobreak class if it expanded the link container.
+      marks.forEach((mark) => {
+        if (mark.originalWidth && mark.fontSize && mark.breakPreventer &&
+          mark.lastWordLength && mark.lastWordLength > 8 &&
+          mark.link.getBoundingClientRect().width / mark.fontSize >
+          (mark.originalWidth + mark.fontSize) / mark.fontSize) {
+          mark.breakPreventer.classList.remove(LinkPurpose.options.noBreakClass)
+        }
       })
     }
 
