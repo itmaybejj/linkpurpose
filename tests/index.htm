@@ -228,6 +228,10 @@
                 let wrapper = document.createElement('div');
                 wrapper.setAttribute('class','wrapper');
                 wrapper.innerHTML = `<a href="https://www.princeton.edu">External link in the shadow DOM</a>`
+                let outerLink = document.createElement('a');
+                outerLink.setAttribute('href', 'https://www.princeton.edu');
+                outerLink.textContent = 'overflowLinkInTheShadowDomThatOverflowsSometimes';
+                shadow.appendChild(outerLink);
                 shadow.appendChild(wrapper);
                 this.initialized = true;
               }

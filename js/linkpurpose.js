@@ -508,15 +508,15 @@ class LinkPurpose {
               if (mark.link.hasAttribute('aria-describedby')) {
                 // multiple IDs, simple text
                 mark.link.setAttribute('aria-describedby', `${mark.link.getAttribute('aria-describedby')} link-purpose-description-${LinkPurpose.unique}`);
-                iconText.textContent = ` (${LinkPurpose.options.purposes[hit.type].message})`;
+                iconText.textContent = ` ${LinkPurpose.options.purposes[hit.type].message}`;
               } else if (mark.link.hasAttribute('aria-description')) {
                 // single ID, merged text
                 mark.link.setAttribute('aria-describedby', `link-purpose-description-${LinkPurpose.unique}`);
-                iconText.textContent = `${mark.link.getAttribute('aria-description')} (${LinkPurpose.options.purposes[hit.type].message})`;
+                iconText.textContent = `${mark.link.getAttribute('aria-description')}, ${LinkPurpose.options.purposes[hit.type].message}`;
               } else {
                 // single ID, single text
                 mark.link.setAttribute('aria-describedby', `link-purpose-description-${LinkPurpose.unique}`);
-                iconText.textContent = ` (${LinkPurpose.options.purposes[hit.type].message})`;
+                iconText.textContent = ` ${LinkPurpose.options.purposes[hit.type].message}`;
               }
             }
 
@@ -529,8 +529,8 @@ class LinkPurpose {
             }
             const iconText = mark.link.querySelector('.link-purpose-text')
             iconText.textContent = iconText.textContent ?
-              ` ${iconText.textContent}, (${LinkPurpose.options.purposes[hit.type].message})` :
-              `(${LinkPurpose.options.purposes[hit.type].message})`
+              ` ${iconText.textContent}, ${LinkPurpose.options.purposes[hit.type].message}` :
+              `${LinkPurpose.options.purposes[hit.type].message}`
           }
           if (LinkPurpose.options.purposes[hit.type].newWindow) {
             mark.link.setAttribute('target', '_blank')
