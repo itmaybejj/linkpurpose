@@ -5,7 +5,7 @@ class LinkPurpose {
   // ESLint config
 
   constructor (option) {
-    LinkPurpose.version = '1.0.7';
+    LinkPurpose.version = '1.0.8';
 
     let checkLinks = [];
     let marks = [];
@@ -521,12 +521,6 @@ class LinkPurpose {
             }
 
           } else if (showText) {
-            if (!mark.link.hasAttribute('aria-describedby')) {
-              mark.link.setAttribute('aria-describedby', `link-purpose-description-${LinkPurpose.unique}`);
-            } else if (mark.link.getAttribute('aria-describedby') !== `link-purpose-description-${LinkPurpose.unique}`) {
-              // Multiple hits, stack descriptions.
-              mark.link.setAttribute('aria-describedby', `${mark.link.getAttribute('aria-describedby')} link-purpose-description-${LinkPurpose.unique}`);
-            }
             const iconText = mark.link.querySelector('.link-purpose-text')
             iconText.textContent = iconText.textContent ?
               ` ${iconText.textContent}, ${LinkPurpose.options.purposes[hit.type].message}` :
