@@ -1,6 +1,6 @@
 {
   "name": "linkpurpose",
-  "version": "1.0.5",
+  "version": "1.0.9",
   "description": "Provides visible and screen reader indicators for external, document, email and new window links.",
   "main": "index.js",
   "directories": {

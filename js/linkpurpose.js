@@ -4,8 +4,8 @@
 class LinkPurpose {
   // ESLint config
 
-  constructor (option) {
-    LinkPurpose.version = '1.0.8';
+  constructor(option) {
+    LinkPurpose.version = '1.0.9';
 
     let checkLinks = [];
     let marks = [];
@@ -23,7 +23,7 @@ class LinkPurpose {
       // Shadow components inside the root to check within, e.g., 'accordion, spa-content'
       shadowComponents: false,
       // CSS file to insert into shadow components. e.g., /path/to/linkpurpose.css
-      shadowCSS : false,
+      shadowCSS: false,
 
       // For these links, only provide the screen reader help text. e.g. '.in-the-news a'
       hideIcon: '',
@@ -307,7 +307,7 @@ class LinkPurpose {
         const hits = [];
         let newWindow = false;
         for (const [key, value] of Object.entries(LinkPurpose.options.purposes)) {
-          if (value.selector && (link.matches(value.selector) || (value.additionalSelector && link.matches(value.additionalSelector))))  {
+          if (value.selector && (link.matches(value.selector) || (value.additionalSelector && link.matches(value.additionalSelector)))) {
             // We have a hit.
 
             // Add new window last, so other icon "wins."
@@ -427,12 +427,15 @@ class LinkPurpose {
                   }
                 }
                 if (lastTextNode && lastTextNode.nodeName === '#text' && lastTextNode.textContent.length > 0) {
+                  // We have a last word situation.
                   const lastText = lastTextNode.textContent
                   const lastWord = lastText.match(lastWordRegex)
                   if (lastWord && lastWord[0].length < 30) {
                     // 30-char limit prevents horizontal scrollbars from urls.
                     mark.lastWordLength = lastWord[0].length
-                    const onlyWord = mark.lastWordLength === lastText.length;
+                    // Only word, and there isn't a span before it.
+                    const onlyWord = mark.lastWordLength === lastText.length
+                      && !(lastTextNode.previousSibling && lastTextNode.previousSibling.checkVisibility() && /^\s/.test(lastWord[0]));
                     const leadingSpace = onlyWord ? lastText.match(initialSpaceRegex) : false;
                     let trailingSpace = lastText.match(trailingSpaceRegex);
                     // Wrap the last word in a span.
@@ -614,14 +617,14 @@ class LinkPurpose {
         }
         if (LinkPurpose.options.shadowCSS) {
           let cssBundle = document.createElement('div');
-          cssBundle.setAttribute('hidden','');
+          cssBundle.setAttribute('hidden', '');
           let cssLink = document.createElement('link');
           cssLink.setAttribute('rel', 'stylesheet');
           cssLink.setAttribute('media', 'all');
           cssLink.setAttribute('href', LinkPurpose.options.shadowCSS + '?v=' + LinkPurpose.version);
           cssBundle.append(cssLink);
 
-          LinkPurpose.attachCSS = function(appendTo) {
+          LinkPurpose.attachCSS = function (appendTo) {
             appendTo.appendChild(cssBundle.cloneNode(true));
           };
         }
