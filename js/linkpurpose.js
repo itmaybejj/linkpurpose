@@ -435,7 +435,9 @@ class LinkPurpose {
                     mark.lastWordLength = lastWord[0].length
                     // Only word, and there isn't a span before it.
                     const onlyWord = mark.lastWordLength === lastText.length
-                      && !(lastTextNode.previousSibling && lastTextNode.previousSibling.checkVisibility() && /^\s/.test(lastWord[0]));
+                      && !(typeof lastTextNode.previousSibling === 'function'
+                        && lastTextNode.previousSibling.checkVisibility()
+                        && /^\s/.test(lastWord[0]));
                     const leadingSpace = onlyWord ? lastText.match(initialSpaceRegex) : false;
                     let trailingSpace = lastText.match(trailingSpaceRegex);
                     // Wrap the last word in a span.
