@@ -434,10 +434,11 @@ class LinkPurpose {
                     // 30-char limit prevents horizontal scrollbars from urls.
                     mark.lastWordLength = lastWord[0].length
                     // Only word, and there isn't a span before it.
+                    // TODO: This will false negative on a code comment node type.
                     const onlyWord = mark.lastWordLength === lastText.length
-                      && !(typeof lastTextNode.previousSibling === 'function'
-                        && lastTextNode.previousSibling.checkVisibility()
-                        && /^\s/.test(lastWord[0]));
+                      && !((lastTextNode.previousElementSibling
+                        && lastTextNode.previousElementSibling.checkVisibility()
+                        && /^\s/.test(lastWord[0])));
                     const leadingSpace = onlyWord ? lastText.match(initialSpaceRegex) : false;
                     let trailingSpace = lastText.match(trailingSpaceRegex);
                     // Wrap the last word in a span.
