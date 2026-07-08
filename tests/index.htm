@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <!--suppress HtmlUnknownTag, HtmlUnknownTarget -->
 <html lang="en">
-    <head>
-        <title>Testing base library</title>
-        <meta charset="utf-8">
-        <link rel="stylesheet" media="all" href="../css/linkpurpose.css">
-        <script src="../js/linkpurpose.js"></script>
-    </head>
+
+<head>
+    <title>Testing base library</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" media="all" href="../css/linkpurpose.css">
+    <script src="../js/linkpurpose.js"></script>
+</head>
+
 <body>
     <header>
         <h1>Link Purpose tests</h1>
@@ -20,32 +22,56 @@
                     <li>
                         <a href="https://www.princeton.edu">External links</a>
                     </li>
+
                     <li>
-                        <a href="https://www.princeton.edu">External links with trailing whitespace </a>
+                        External links that wrap the<a href="https://www.princeton.edu"> spaces </a>that should have
+                        been around them.
                     </li>
                     <li style="width: 20em;">
-                        An <a href="https://www.princeton.edu">External link inline</a> in a sentence that breaks over several lines, followed by more words on a line that should have the same line height.
+                        An <a href="https://www.princeton.edu">External link inline</a> in a sentence that breaks over
+                        several lines, followed by more words on a line that should have the same line height.
                     </li>
+                    <li style="width: 5em;">
+                        A link where adding the nobreak will <a
+                            href="https://www.princeton.edu">exceedTheContainerWidth</a>.
+                    </li>
+                    <li>
+                        A link where adding the nobreak will collide <a href="https://www.princeton.edu">Fifth word is
+                            in <strong>a</strong> span</a>.
+                    </li>
+                    <li>
+                        But not if that span is invisible<a href="https://www.princeton.edu">Fifth word is
+                            not a <strong style="display: none;"></strong> span</a>.
+                    </li>
+                    <li>
+                        <span style="display: inline-block; outline: 1px dotted;"></span><a
+                            href="https://www.princeton.edu">expandTheContainerWidth</a>.</a>
+                    </li>
+                    <li style="width: 20em; max-height: 2em; overflow: hidden">
+                        So long that it breaks the page <a
+                            href="https://www.princeton.edu">https://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.eduhttps://www.princeton.edu</a>
+                    </li>
+
                 </ul>
 
             </section>
             <section id="new-window">
                 <ul>
                     <li>
-                        <a href="/" target="_blank">New window link</a>
+                        <a href="/" target="_blank">_Blank link</a>
                     </li>
                 </ul>
             </section>
             <section id="document">
                 <ul>
                     <li>
-                        <a href="/example.pdf">PDF link</a>
+                        <a href="/example.pdf">My CV</a>
                     </li>
                     <li>
-                        <a href="/example.pdf" download="">PDF and download, PDF should win</a>
+                        <a href="/example.pdf" download="">My CV and dwnld attribute, CV should win</a>
                     </li>
                     <li>
-                        <a href="/example.pdf" target="_blank">PDF and new window, PDF should win</a>
+                        <a href="/example.pdf" target="_blank">CV and _blank, CV should win</a>
                     </li>
                 </ul>
             </section>
@@ -61,10 +87,10 @@
             <section id="email">
                 <ul>
                     <li>
-                        <a href="mailto:example@example.com">Email</a>
+                        <a href="mailto:example@example.com">Contact us</a>
                     </li>
                     <li>
-                        <a href="mailto:example@example.com">Email in new window link</a>
+                        <a href="mailto:example@example.com">Contact us in new window</a>
                     </li>
                 </ul>
             </section>
@@ -72,10 +98,22 @@
             <section id="download">
                 <ul>
                     <li>
-                        <a href="/" download>Download</a>
+                        <a href="/" download>Zip</a>
                     </li>
                     <li>
-                        <a href="https://www.princeton.edu" download target="_blank">Download from external in new window link</a>
+                        <a href="/" download>&nbsp; Zip</a> with preceding nbsp; whitespace
+                    </li>
+                    <li>
+                        <a href="https://www.princeton.edu" download target="_blank">Zip from external in _blank
+                            link</a>
+                    </li>
+                </ul>
+
+            </section>
+            <section id="phone">
+                <ul>
+                    <li>
+                        <a href="tel:123">Call</a>
                     </li>
                 </ul>
 
@@ -87,26 +125,47 @@
                         <a href="/" download><img src="download_FILL0_wght400_GRAD0_opsz24.svg">Link with image</a>
                     </li>
                     <li>
-                        <a href="/" download><span><img src="download_FILL0_wght400_GRAD0_opsz24.svg"></span>Link with nested image</a>
+                        <a href="/" download><span><img src="download_FILL0_wght400_GRAD0_opsz24.svg"></span>Link with
+                            nested image</a>
                     </li>
                     <li>
-                        <a href="/" download><figure>(fig)</figure>Link with figure</a>
+                        <a href="/" download>
+                            <figure>(fig)</figure>Link with figure
+                        </a>
                     </li>
                 </ul>
-                <h3>Icon has no hidden text [redundant string branch only]</h3>
+                <h3>Icon has modified hidden text</h3>
                 <ul>
                     <li>
-                        <a href="/" download>Link that warns about download (no screen reader text)</a>
+                        <a href="mailto:example@example.com">example@example.com</a>
+                    <li>
+                        <a href="/" download>Download</a>
                     </li>
                     <li>
-                        <a href="/" download target="_blank">Link that warns about download but not new window (new window text)</a>
+                        <a href="/example.ppt">Example (.doc)</a>
+                    </li>
+                    <li>
+                        <a href="/" download>Download (opens in new window)</a>
+                    </li>
+                    <li>
+                        <a href="/" download target="_blank">Link that warns about download but not where it opens (some
+                            screen reader text)</a>
                     </li>
                 </ul>
             </section>
         </div>
         <div id="negative">
-            <h2>Icons not shown</h2>
+            <h2>Links not matched</h2>
             <ul>
+                <li>
+                    <a href="https://www.harvard.edu">Specific (https://...) permitted external domain</a>
+                </li>
+                <li>
+                    <a href="https://www.yale.edu">Protocol (//...) external domain</a>
+                </li>
+                <li>
+                    <a href="https://www.dartmouth.edu">Wildcard (*...) external domain</a>
+                </li>
                 <li>
                     <a href="javascript:">JS Href should be ignored</a>
                 </li>
@@ -114,6 +173,74 @@
                     <a href="/?http%3A%2F%2F">HTTP as query variable should be ignored</a>
                 </li>
             </ul>
+        </div>
+        <div id="outside-hidden">
+            <h2>Icons inserted outside of a hidden element</h2>
+            <ul>
+                <li>
+                    <a href="/" download target="_blank">Icon will be inserted inside this <span
+                            class="not-visually-hidden" style="opacity: .35;">hidden span not in the match
+                            list</span></a>
+                </li>
+                <li>
+                    <a href="/" download target="_blank">This hidden span is on match list and should move into nobreak:
+                        <span class="visually-hidden" style="opacity: .25;">hidden span</span> <span
+                            class="visually-hidden" style="opacity: .25;">Hidden span is nested: </span> <span
+                            class="visually-hidden" style="opacity: .25;">hidden span</span></a>
+                </li>
+                <li>
+                    <a href="/" download target="_blank">Matched hidden span is nested, no-break doesn't work right
+                        <span><span class="visually-hidden" style="opacity: .25;">nested hidden span</span></span></a>
+                </li>
+
+            </ul>
+        </div>
+        <div id="suppress-nobreak">
+            <h2>Suppress no-break</h2>
+            <ul>
+                <li><a href="/" download="">This should not have a nobreak</a></li>
+            </ul>
+        </div>
+        <div id="extra-description">
+            <h2 id="already-described">Link already has describedby attribute</h2>
+            <ul>
+                <li><a href="/example.pdf" download="" target="_blank" aria-describedby="already-described">Existing
+                        aria-describedby will stack in ID list</a></li>
+                <li><a href="/" download="" aria-description="already-described">Existing aria-description will mirror
+                        into text</a></li>
+            </ul>
+        </div>
+        <div id="trimming">
+            <h2>Trimming and tree walking</h2>
+            <ul>
+                <li>
+                    <h2 class="block-heading"><a href="/" download="">Digital Accessibility?&nbsp; &ensp; &hairsp;
+                            &thinsp;
+
+                        </a>|</h2>
+                </li>
+                <li><a href="/" download=""><span><span><span>Move trailing
+                                    whitespace</span>&nbsp;</span>&nbsp;</span>&nbsp;</a>| </li>
+                <li>
+                    <a href="/" download target="_blank">Nullish variants<span class="visually-hidden"
+                            style="opacity: .25;"></span></a>
+                    <a href="/" download target="_blank"> <span class="visually-hidden" style="opacity: .25;"> </span>
+                    </a>
+                    <a href="/" download target="_blank"><span class="visually-hidden" style="opacity: .25;"></span></a>
+                    <a href="/" download target="_blank"></a>
+                </li>
+                <li>
+                    This link should still have comments surrounding the span: Handling <a href="/" download
+                        target="_blank">
+                        <!-- This is a start of an existing comment -->
+                        comments
+                        <!-- This is the end of an existing comment -->
+                    </a> inside link content.
+                </li>
+            </ul>
+        </div>
+        <div>
+            <shadow-test></shadow-test>
         </div>
 
 
@@ -126,29 +253,53 @@
         <!--suppress JSUnusedGlobalSymbols -->
         <script>
 
-          if (CSS.supports('selector(:is(body))')) {
-            const linkPurpose = new LinkPurpose({
-
-              noReferrer: true,
-              noIconOnImages: true,
-              purposes: {
-                spreadsheet: {
-                  priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
-                  selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
-                  message: '(Link downloads spreadsheet)', // Hidden text for screen readers
-                  linkClass: 'link-purpose-spreadsheet', // Goes on link
-                  iconWrapperClass: 'link-purpose-spreadsheet-icon', // Goes on span around icon
-                  iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
-                  iconType: 'classes', // Apply classes to a span to create link
-                  iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
-                },
-                external: {
-                  newWindow: true
+            class shadowTest extends HTMLElement {
+                constructor() {
+                    super();
                 }
-              }
-          })
+                connectedCallback() {
+                    if (!this.initialized) {
+                        const shadow = this.attachShadow({ mode: 'open' });
+                        let wrapper = document.createElement('div');
+                        wrapper.setAttribute('class', 'wrapper');
+                        wrapper.innerHTML = `<a href="https://www.princeton.edu">External link in the shadow DOM</a>`
+                        let outerLink = document.createElement('a');
+                        outerLink.setAttribute('href', 'https://www.princeton.edu');
+                        outerLink.textContent = 'overflowLinkInTheShadowDomThatOverflowsSometimes';
+                        shadow.appendChild(outerLink);
+                        shadow.appendChild(wrapper);
+                        this.initialized = true;
+                    }
+                }
+            }
+            customElements.define('shadow-test', shadowTest);
 
-          };
+            if (CSS.supports('selector(:is(body))')) {
+                const linkPurpose = new LinkPurpose({
+                    domain: 'https://www.harvard.edu, //www.yale.edu, *dartmouth.edu',
+                    noReferrer: true,
+                    noIconOnImages: true,
+                    shadowComponents: 'shadow-test',
+                    suppressNoBreak: '#suppress-nobreak a',
+                    //watch: false,
+                    purposes: {
+                        spreadsheet: {
+                            priority: 50, // Higher numbers "win," e.g., mark external spreadsheets as spreadsheet
+                            selector: '[href$=\'.xls\'], [href*=\'.xls?\'], [href^="https://docs.google.com/spreadsheets/"]',
+                            message: '(Link downloads spreadsheet)', // Hidden text for screen readers
+                            linkClass: 'link-purpose-spreadsheet', // Goes on link
+                            iconWrapperClass: 'link-purpose-spreadsheet-icon', // Goes on span around icon
+                            iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
+                            iconType: 'classes', // Apply classes to a span to create link
+                            iconClasses: ['fa-regular', 'fa-file-excel'], // Apply these classes
+                        },
+                        external: {
+                            newWindow: true
+                        }
+                    }
+                })
+
+            };
 
         </script>
 
@@ -156,10 +307,20 @@
             body {
                 padding: 2rem 5%;
             }
+
+            .link-purpose-nobreak {
+                outline: 1px dotted;
+            }
+
+            .link-purpose-spacer {
+                background: cadetblue;
+            }
+
             a:hover {
                 color: wheat;
                 background-color: brown;
             }
+
             .link-purpose::before {
                 font-family: sans-serif;
                 font-size: 12px;
@@ -167,6 +328,27 @@
                 font-style: italic;
                 color: black;
             }
+
+            .visually-hidden {
+                position: absolute;
+                overflow: hidden;
+                clip: rect(0 0 0 0);
+                clip-path: inset(50%);
+                width: 1px;
+                height: 1px;
+                white-space: nowrap;
+            }
+
+            /* debug, but duplicates reading in screen readers */
+            /*
+            .link-purpose-text {
+              display: inline-block !important;
+              outline: 1px solid gray;
+              color: gray;
+              font-style: italic;
+              font-size: 12px;
+              margin: 0 6px;
+            }*/
         </style>
     </main>
 </body>

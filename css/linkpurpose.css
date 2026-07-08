@@ -1,47 +1,66 @@
-.link-purpose-nobreak {
-    white-space: nowrap;
-}
-.link-purpose-icon {
-    display: inline-block;
-    width: .917em;
-    height: .917em;
-    min-height: 9px;
-    margin: 0 .25em;
-    font-size: .75em;
-}
-.link-purpose-icon.svg-inline--fa {
-    vertical-align: initial;
-}
-.link-purpose-external-icon {
-    height: .875em;
-}
-.link-purpose-mail-icon .linkpurpose-default-svg {
-    transform: translateY(2px);
-}
-.link-purpose-document-icon .linkpurpose-default-svg {
-    transform: none;
-}
-.link-purpose-icon svg {
-    width: 100%;
-    height: 100%;
-    vertical-align: initial;
-}
-.link-purpose-icon.svg-inline--fa {
-  margin: 0 .1875em;
-}
-.link-purpose-text {
-    position: absolute;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    width: 1px;
-    height: 1px;
-    white-space: nowrap;
+.link-purpose-spacer {
+  white-space: pre-wrap;
+  min-width: .125em;
 }
 
-.link-purpose-hide-on-image :is(img, figure, svg) ~ .link-purpose-icon,
-.link-purpose-hide-on-image :is(img, figure, svg) ~ .link-purpose-nobreak .link-purpose-icon,
-.link-purpose-hide-on-image *:has(img, svg, figure) ~ .link-purpose-icon,
-.link-purpose-hide-on-image *:has(img, svg, figure) ~ .link-purpose-nobreak .link-purpose-icon {
-    display: none;
+.link-purpose-nobreak {
+  white-space: nowrap;
+}
+
+.link-purpose-last-word {
+  gap: 0;
+}
+
+.link-purpose-icon {
+  display: inline-block;
+  width: .917em;
+  height: .917em;
+  min-height: 9px;
+  margin: 0 .25em;
+  font-size: .75em;
+}
+
+.link-purpose-icon.svg-inline--fa {
+  vertical-align: initial;
+}
+
+.link-purpose-external-icon {
+  height: .875em;
+}
+
+.link-purpose-mail-icon .linkpurpose-default-svg {
+  transform: translateY(2px);
+}
+
+.link-purpose-document-icon .linkpurpose-default-svg {
+  transform: none;
+}
+
+.link-purpose-icon svg {
+  width: 100%;
+  height: 100%;
+  vertical-align: initial;
+}
+
+.link-purpose-icon.svg-inline--fa {
+  margin: 0 0.1875em;
+}
+
+.link-purpose-text {
+  display: none !important;
+}
+
+.link-purpose-hide-on-image :is(img,
+  figure,
+  svg)~.link-purpose-icon,
+.link-purpose-hide-on-image :is(img,
+  figure,
+  svg)~.link-purpose-nobreak .link-purpose-icon,
+.link-purpose-hide-on-image *:has(img,
+  svg,
+  figure)~.link-purpose-icon,
+.link-purpose-hide-on-image *:has(img,
+  svg,
+  figure)~.link-purpose-nobreak .link-purpose-icon {
+  display: none;
 }
