@@ -3,13 +3,16 @@
   min-width: .125em;
 }
 
+
 .link-purpose-nobreak {
   white-space: nowrap;
 }
 
+
 .link-purpose-last-word {
   gap: 0;
 }
+
 
 .link-purpose-icon {
   display: inline-block;
@@ -20,21 +23,26 @@
   font-size: .75em;
 }
 
+
 .link-purpose-icon.svg-inline--fa {
   vertical-align: initial;
 }
+
 
 .link-purpose-external-icon {
   height: .875em;
 }
 
+
 .link-purpose-mail-icon .linkpurpose-default-svg {
   transform: translateY(2px);
 }
 
+
 .link-purpose-document-icon .linkpurpose-default-svg {
   transform: none;
 }
+
 
 .link-purpose-icon svg {
   width: 100%;
@@ -42,9 +50,11 @@
   vertical-align: initial;
 }
 
+
 .link-purpose-icon.svg-inline--fa {
   margin: 0 0.1875em;
 }
+
 
 .link-purpose-text {
   display: none !important;
