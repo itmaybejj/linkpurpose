@@ -43,7 +43,7 @@ to this:
         <span class="link-purpose-icon link-purpose-external-icon" aria-hidden="true">
             <svg ...></svg>
         </span>
-        <span class="link-purpose-text">
+        <span class="link-purpose-text" data-nosnippet>
             (Link is external)
         </span>
     </span>
