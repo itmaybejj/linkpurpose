@@ -508,6 +508,7 @@ class LinkPurpose {
             if (LinkPurpose.options.hiddenTextClass) {
               iconText.classList.add(LinkPurpose.options.hiddenTextClass);
             }
+            iconText.setAttribute('data-nosnippet', '');
             iconText.setAttribute('id', `link-purpose-description-${LinkPurpose.unique}`)
             spanTarget.append(iconText);
             if (showText) {
