@@ -382,7 +382,7 @@ class LinkPurpose {
 
             if (mark.showIcon) {
               mark.link.classList.add(LinkPurpose.options.baseLinkClass, LinkPurpose.options.purposes[hit.type].linkClass);
-              if (LinkPurpose.options.noIconOnImages) {
+              if (LinkPurpose.options.noIconOnImages && mark.link.querySelector('img, figure, svg')) {
                 mark.link.classList.add('link-purpose-hide-on-image')
               }
 
