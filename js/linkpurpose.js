@@ -71,7 +71,7 @@ class LinkPurpose {
           iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M432 48H208c-17.7 0-32 14.3-32 32V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V336h16c17.7 0 32-14.3 32-32V80c0-17.7-14.3-32-32-32zM48 448c0 8.8 7.2 16 16 16H320c8.8 0 16-7.2 16-16V256H48V448zM64 128H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></svg>',
           iconClasses: ['fa-regular', 'fa-window-restore'], // Goes on icon span only if iconType is "classes"
-          redundantStrings: /\b(window|tab)\b/i, // Screen reader text will not be inserted if present
+          redundantStrings: /\b(windows?|tabs?)\b/i, // Screen reader text will not be inserted if present
         },
 
         external: {
@@ -99,13 +99,13 @@ class LinkPurpose {
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>',
           iconClasses: ['fa-solid', 'fa-download'], // set iconType to classes to use
-          redundantStrings: /(download)/i,
+          redundantStrings: /download/i,
         },
 
         document: {
           priority: 50,
           selector: '[href$=\'.pdf\'], [href*=\'.pdf?\'], [href$=\'.doc\'], [href$=\'.docx\'], [href*=\'.doc?\'], [href*=\'.docx?\'], [href$=\'.ppt\'], [href$=\'.pptx\'], [href*=\'.ppt?\'], [href*=\'.pptx?\']',
-          message: 'Links downloads document', // filetype will be appended
+          message: 'Link downloads document',
           linkClass: 'link-purpose-document',
           iconWrapperClass: 'link-purpose-document-icon',
           iconType: 'html',
@@ -296,9 +296,10 @@ class LinkPurpose {
 
     }
 
-    const lastWordRegex = /\s*\S+\s*$/g;
-    const initialSpaceRegex = /^\s+/g;
-    const trailingSpaceRegex = /\s+$/g;
+    // Same character set as String.prototype.trim(). No /g: .test() on a /g regex is stateful.
+    const whitespaceRegex = /\s/;
+    // Whitespace that does not allow a line break (Unicode line breaking class GL).
+    const nonBreakingSpaceRegex = /^[\u00a0\u2007\u202f]+$/;
     // Longer words are not wrapped; prevents horizontal scrollbars from urls.
     const maxNoBreakLength = 30;
     // Checking whether a nobreak expanded its container is slow, so only bother for longer words.
@@ -358,36 +359,70 @@ class LinkPurpose {
       }
 
       const lastText = lastTextNode.textContent
-      const lastWordMatch = lastText.match(lastWordRegex)
-      if (!lastWordMatch) {
-        return false
-      }
-      // Includes surrounding whitespace, which is removed from the text node along with the word.
-      const lastWordWithSpace = lastWordMatch[0]
+
       // Measure the limit without whitespace: source indentation is not part of the word.
-      const word = lastWordWithSpace.trim()
-      if (word.length >= maxNoBreakLength) {
+      // Scan backwards instead a $-anchored regex; faster when the text is long.
+      const wordEnd = lastText.trimEnd().length
+      let wordStart = wordEnd
+      while (wordStart > 0 && !whitespaceRegex.test(lastText[wordStart - 1])) {
+        wordStart--
+        if (wordEnd - wordStart >= maxNoBreakLength) {
+          return false
+        }
+      }
+      if (wordStart === wordEnd) {
         return false
       }
+      // Start of the whitespace before the word, which is removed from the text node along with the word.
+      let spaceStart = wordStart
+      while (spaceStart > 0 && whitespaceRegex.test(lastText[spaceStart - 1])) {
+        spaceStart--
+      }
+      const word = lastText.substring(wordStart, wordEnd)
 
       // Only word, and there isn't a visible element before it.
       // TODO: This will false negative on a code comment node type.
       // checkVisibility() forces a style recalc; here it shares one recalc with the other reads.
-      const onlyWord = lastWordWithSpace.length === lastText.length &&
+      const onlyWord = spaceStart === 0 &&
         !((lastTextNode.previousElementSibling &&
           lastTextNode.previousElementSibling.checkVisibility() &&
-          /^\s/.test(lastWordWithSpace)));
+          wordStart > 0));
+
+      // Whitespace moved out of the link is replaced by one space outside it.
+      // Otherwise the replaced whitespace is the controlled-width spacer.
+      const leadingSpace = onlyWord ? outsideSpace(lastText.substring(0, wordStart)) : '';
+      // trailingSpaceNodes were collected outermost first; join them in document order.
+      const trailingSpace = outsideSpace(lastText.substring(wordEnd) +
+        trailingSpaceNodes.map(node => node.textContent).reverse().join(''));
 
       return {
         lastTextNode,
-        lastText,
-        lastWordWithSpace,
+        keepText: lastText.substring(0, spaceStart),
         word,
         onlyWord,
+        leadingSpace,
+        trailingSpace,
         trailingSpaceNodes,
         excludedNode,
         commentNodes
       }
+    }
+
+    /**
+     * Picks the single space that replaces whitespace moved outside a link.
+     *
+     * A run of only no-break spaces stays a no-break space, so the link stays
+     * attached to its neighbor as the author intended. Anything else may
+     * already break, so it becomes a plain space.
+     *
+     * @param {string} whitespace
+     * @return {string} The space to insert, or '' if there was no whitespace.
+     */
+    const outsideSpace = function (whitespace) {
+      if (whitespace.length === 0) {
+        return ''
+      }
+      return nonBreakingSpaceRegex.test(whitespace) ? '\u00a0' : '\u0020'
     }
 
     const processLinks = function () {
@@ -494,16 +529,15 @@ class LinkPurpose {
                 // The nodes were found by findLastWord() during processLinks.
                 const {
                   lastTextNode,
-                  lastText,
-                  lastWordWithSpace,
+                  keepText,
                   word,
                   onlyWord,
+                  leadingSpace,
+                  trailingSpace,
                   trailingSpaceNodes,
                   excludedNode,
                   commentNodes
                 } = mark.lastWord;
-                const leadingSpace = onlyWord ? lastText.match(initialSpaceRegex) : false;
-                let trailingSpace = lastText.match(trailingSpaceRegex);
                 // Wrap the last word in a span.
                 mark.breakPreventer = document.createElement('span')
                 mark.breakPreventer.textContent = word;
@@ -519,22 +553,19 @@ class LinkPurpose {
                   lastTextNode.parentNode.append(mark.breakPreventer);
                 } else {
                   // Only wrap last string, and insert a controlled width spacer.
-                  lastTextNode.textContent = lastText.substring(0, lastText.length - lastWordWithSpace.length)
+                  lastTextNode.textContent = keepText
                   lastTextNode.parentNode.append(spacer.cloneNode(true), mark.breakPreventer)
                 }
+                // Move whitespace out of the link (findLastWord chose the replacement spaces).
                 if (leadingSpace) {
-                  mark.link.insertAdjacentText('beforebegin', '\u0020');
+                  mark.link.insertAdjacentText('beforebegin', leadingSpace);
                 }
-                if (trailingSpaceNodes.length > 0) {
-                  trailingSpace = true;
-                  // Move whitespace out of link.
-                  trailingSpaceNodes.forEach(space => {
-                    // noinspection JSPrimitiveTypeWrapperUsage
-                    space.textContent = ''
-                  })
-                }
+                trailingSpaceNodes.forEach(space => {
+                  // noinspection JSPrimitiveTypeWrapperUsage
+                  space.textContent = ''
+                })
                 if (trailingSpace) {
-                  mark.link.insertAdjacentText('afterend', '\u0020');
+                  mark.link.insertAdjacentText('afterend', trailingSpace);
                 }
                 // HTML comments inside the link should retain relative position.
                 if (commentNodes.length > 0) {

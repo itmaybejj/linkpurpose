@@ -166,3 +166,45 @@ test('links inside listed shadow components are marked', async ({ page }) => {
     expect(r.texts).toBe(1);
   }
 });
+
+test('plural "windows" and "tabs" count as redundant new window text', async ({ page }) => {
+  for (const n of [2, 3]) {
+    const result = await link(page, `#new-window li:nth-child(${n}) a`);
+    expect(result.classes).toContain('link-purpose-window');
+    expect(result.icons).toBe(1);
+    expect(result.describedBy).toEqual([]);
+  }
+});
+
+/** The text immediately before and after a link, where moved-out whitespace lands. */
+const outsideText = (page, selector) =>
+  page.locator(selector).first().evaluate((a) => ({
+    before: a.previousSibling?.textContent ?? '',
+    after: a.nextSibling?.textContent ?? ''
+  }));
+
+test('whitespace moved out of the link stays a no-break space only if it was all no-break', async ({ page }) => {
+  // "&nbsp;Zip&nbsp;": both runs are pure nbsp, so the link stays attached to its neighbors.
+  const pure = await outsideText(page, '#download li:nth-child(3) a');
+  expect(pure.before.endsWith(' ')).toBe(true);
+  expect(pure.after.startsWith(' ')).toBe(true);
+  expect(await link(page, '#download li:nth-child(3) a')).toMatchObject({ lastWord: 'Zip' });
+
+  // "&nbsp; Zip": the run already allowed a break, so it becomes a plain space.
+  const mixed = await outsideText(page, '#download li:nth-child(2) a');
+  expect(mixed.before.endsWith(' ')).toBe(true);
+  expect(mixed.before.endsWith(' ')).toBe(false);
+
+  // nbsp, en/hair/thin spaces and newlines after "Accessibility?": plain space.
+  const trimming = await outsideText(page, '#trimming li:nth-child(1) a');
+  expect(trimming.after.startsWith(' ')).toBe(true);
+
+  // Trailing nbsp spread across nested whitespace-only text nodes is joined and kept.
+  const nested = await outsideText(page, '#trimming li:nth-child(2) a');
+  expect(nested.after.startsWith(' ')).toBe(true);
+  const leftInside = await page.locator('#trimming li:nth-child(2) a').evaluate((a) =>
+    Array.from(a.querySelectorAll('span:not(.link-purpose-text, .link-purpose-spacer)'))
+      .flatMap((s) => Array.from(s.childNodes))
+      .filter((n) => n.nodeType === Node.TEXT_NODE && n.textContent.length > 0 && n.textContent.trim() === '').length);
+  expect(leftInside).toBe(0);
+});
