@@ -7,7 +7,11 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint js/linkpurpose.js",
+    "lint:fix": "eslint js/linkpurpose.js --fix",
+    "build": "sh scripts/pack.sh",
+    "test": "node scripts/test-docker.mjs",
+    "test:host": "playwright test --config=e2e/playwright.config.mjs"
   },
   "repository": {
     "type": "git",
@@ -20,10 +24,12 @@
   },
   "homepage": "https://github.com/itmaybejj/linkpurpose#readme",
   "devDependencies": {
+    "@playwright/test": "1.58.2",
     "eslint": "^8.56.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^16.6.2",
-    "eslint-plugin-promise": "^6.1.1"
+    "eslint-plugin-promise": "^6.1.1",
+    "uglify-js": "^3.19.3"
   }
 }
