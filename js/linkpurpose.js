@@ -5,7 +5,7 @@ class LinkPurpose {
   // ESLint config
 
   constructor(option) {
-    LinkPurpose.version = '1.0.9';
+    LinkPurpose.version = '1.0.10';
 
     let checkLinks = [];
     let marks = [];
@@ -71,7 +71,7 @@ class LinkPurpose {
           iconPosition: 'beforeend', // beforebegin, afterbegin, beforeend, afterend
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M432 48H208c-17.7 0-32 14.3-32 32V96H128V80c0-44.2 35.8-80 80-80H432c44.2 0 80 35.8 80 80V304c0 44.2-35.8 80-80 80H416V336h16c17.7 0 32-14.3 32-32V80c0-17.7-14.3-32-32-32zM48 448c0 8.8 7.2 16 16 16H320c8.8 0 16-7.2 16-16V256H48V448zM64 128H320c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V192c0-35.3 28.7-64 64-64z"/></svg>',
           iconClasses: ['fa-regular', 'fa-window-restore'], // Goes on icon span only if iconType is "classes"
-          redundantStrings: /\b(window|tab)\b/i, // Screen reader text will not be inserted if present
+          redundantStrings: /\b(windows?|tabs?)\b/i, // Screen reader text will not be inserted if present
         },
 
         external: {
@@ -99,20 +99,20 @@ class LinkPurpose {
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" width="14" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>',
           iconClasses: ['fa-solid', 'fa-download'], // set iconType to classes to use
-          redundantStrings: /(download)/i,
+          redundantStrings: /download/i,
         },
 
         document: {
           priority: 50,
           selector: '[href$=\'.pdf\'], [href*=\'.pdf?\'], [href$=\'.doc\'], [href$=\'.docx\'], [href*=\'.doc?\'], [href*=\'.docx?\'], [href$=\'.ppt\'], [href$=\'.pptx\'], [href*=\'.ppt?\'], [href*=\'.pptx?\']',
-          message: 'Links downloads document', // filetype will be appended
+          message: 'Link downloads document',
           linkClass: 'link-purpose-document',
           iconWrapperClass: 'link-purpose-document-icon',
           iconType: 'html',
           iconPosition: 'beforeend',
           iconHTML: '<svg class="linkpurpose-default-svg" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 384 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="Currentcolor" d="M64 464c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16H224v80c0 17.7 14.3 32 32 32h80V448c0 8.8-7.2 16-16 16H64zM64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V154.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0H64zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24H264c13.3 0 24-10.7 24-24s-10.7-24-24-24H120zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24H264c13.3 0 24-10.7 24-24s-10.7-24-24-24H120z"/></svg>',
           iconClasses: ['fa-regular', 'fa-file-lines'], // set iconType to classes to use
-          redundantStrings: /\b(download|file|document|doc|docx|word|excel|xls|xlsx|powerpoint|pptx|ppt)\b/i,
+          redundantStrings: /\b(pdf|download|file|document|doc|docx|word|excel|xls|xlsx|powerpoint|pptx|ppt)\b/i,
         },
 
         // Ref www.iana.org/assignments/uri-schemes/uri-schemes.xhtml
@@ -296,6 +296,135 @@ class LinkPurpose {
 
     }
 
+    // Same character set as String.prototype.trim(). No /g: .test() on a /g regex is stateful.
+    const whitespaceRegex = /\s/;
+    // Whitespace that does not allow a line break (Unicode line breaking class GL).
+    const nonBreakingSpaceRegex = /^[\u00a0\u2007\u202f]+$/;
+    // Longer words are not wrapped; prevents horizontal scrollbars from urls.
+    const maxNoBreakLength = 30;
+    // Checking whether a nobreak expanded its container is slow, so only bother for longer words.
+    const minOverflowCheckLength = 9;
+
+    /**
+     * Finds the last word in a link, to be wrapped in a nobreak span with the icon.
+     *
+     * Only reads the DOM, so it can run in processLinks before any writes.
+     * Nothing else writes inside this link before markLinks wraps it.
+     *
+     * @param {Element} link
+     * @return {Object|false} Nodes and text needed to wrap the word, or false if there is no wrappable word.
+     */
+    const findLastWord = function (link) {
+      let lastTextNode = link.lastChild
+      const trailingSpaceNodes = []
+      const excludedNode = [];
+      const commentNodes = [];
+
+      // Recurses down and back looking for text nodes.
+      // This WILL miss if the last element is an empty tree,
+      // but missing is better than moving possibly styled nodes.
+      while (lastTextNode) {
+        if (lastTextNode.lastChild) {
+          // lastChild has descendants (not a text node).
+          if (lastTextNode.matches(LinkPurpose.options.insertIconOutsideHiddenSpan)) {
+            // lastChild is hidden; move to previous sibling.
+            excludedNode.push(lastTextNode);
+            lastTextNode = lastTextNode.previousSibling;
+          } else {
+            // lastChild is visible, move to descendent node.
+            lastTextNode = lastTextNode.lastChild
+          }
+        } else if (
+          // lastChild IS text, but only whitespace
+          lastTextNode.nodeName === '#text' &&
+          lastTextNode.textContent.trim().length === 0 &&
+          lastTextNode.previousSibling
+        ) {
+          // Move to previous sibling.
+          trailingSpaceNodes.push(lastTextNode);
+          lastTextNode = lastTextNode.previousSibling;
+        } else if (lastTextNode.nodeName === '#comment') {
+          // Comment, so move up to previous sibling.
+          // Capture comment to re-introduce later.
+          commentNodes.push(lastTextNode);
+          lastTextNode = lastTextNode.previousSibling;
+        } else {
+          // Last node was valid text or no siblings remain.
+          break
+        }
+      }
+
+      if (!lastTextNode || lastTextNode.nodeName !== '#text' || lastTextNode.textContent.length === 0) {
+        return false
+      }
+
+      const lastText = lastTextNode.textContent
+
+      // Measure the limit without whitespace: source indentation is not part of the word.
+      // Scan backwards instead a $-anchored regex; faster when the text is long.
+      const wordEnd = lastText.trimEnd().length
+      let lastWordStart = wordEnd
+      while (lastWordStart > 0 && !whitespaceRegex.test(lastText[lastWordStart - 1])) {
+        lastWordStart--
+        if (wordEnd - lastWordStart >= maxNoBreakLength) {
+          return false
+        }
+      }
+      if (lastWordStart === wordEnd) {
+        return false
+      }
+      // Start of the whitespace before the word, which is removed from the text node along with the word.
+      let spaceStart = lastWordStart
+      while (spaceStart > 0 && whitespaceRegex.test(lastText[spaceStart - 1])) {
+        spaceStart--
+      }
+      const word = lastText.substring(lastWordStart, wordEnd)
+
+      // Only word, and there isn't a visible element before it.
+      // TODO: This will false negative on a code comment node type.
+      // checkVisibility() forces a style recalc; here it shares one recalc with the other reads.
+      const onlyWord = spaceStart === 0 &&
+        !((lastTextNode.previousElementSibling &&
+          lastTextNode.previousElementSibling.checkVisibility() &&
+          lastWordStart > 0));
+
+      // Whitespace moved out of the link is replaced by one space outside it.
+      // Otherwise the replaced whitespace is the controlled-width spacer.
+      const leadingSpace = onlyWord ? outsideSpace(lastText.substring(0, lastWordStart)) : '';
+      // trailingSpaceNodes were collected outermost first; join them in document order.
+      const trailingSpace = outsideSpace(lastText.substring(wordEnd) +
+        trailingSpaceNodes.map(node => node.textContent).reverse().join(''));
+
+      return {
+        lastTextNode,
+        keepText: lastText.substring(0, spaceStart),
+        word,
+        onlyWord,
+        leadingSpace,
+        trailingSpace,
+        trailingSpaceNodes,
+        excludedNode,
+        commentNodes
+      }
+    }
+
+    /**
+     * Picks the single space that replaces whitespace moved outside a link.
+     *
+     * A run of only no-break spaces stays a no-break space, so the link stays
+     * attached to its neighbor as the author intended. Anything else may
+     * already break, so it becomes a plain space.
+     *
+     * @param {string} whitespace
+     * @return {string} The space to insert, or '' if there was no whitespace.
+     */
+    const outsideSpace = function (whitespace) {
+      if (whitespace.length === 0) {
+        return ''
+      }
+      return nonBreakingSpaceRegex.test(whitespace) ? '\u00a0' : '\u0020'
+    }
+
     const processLinks = function () {
       marks = []
 
@@ -317,8 +446,7 @@ class LinkPurpose {
               // No existing hit.
               hits.push({
                 type: key,
-                noReferrer: key === 'external' && LinkPurpose.options.noReferrer,
-                suppressNoBreak: LinkPurpose.options.suppressNoBreak && link.matches(LinkPurpose.options.suppressNoBreak)
+                noReferrer: key === 'external' && LinkPurpose.options.noReferrer
               })
             } else if (value.priority > LinkPurpose.options.purposes[hits[0].type].priority) {
               // New hit is higher priority than existing hit.
@@ -337,14 +465,27 @@ class LinkPurpose {
         }
         if (hits.length !== 0) {
           const showIcon = !(LinkPurpose.options.hideIcon && link.matches(LinkPurpose.options.hideIcon));
+          const hideOnImage = showIcon &&
+            !!LinkPurpose.options.noIconOnImages &&
+            link.querySelector('img, figure, svg') !== null;
           const hitData = {
             link: link,
             hits: hits,
-            showIcon: showIcon
+            showIcon: showIcon,
+            hideOnImage: hideOnImage,
+            lastWord: false
           }
-          if (showIcon && link.parentElement) {
-            hitData.fontSize = parseInt(window.getComputedStyle(link).fontSize);
-            hitData.originalWidth = link.parentElement.getBoundingClientRect().width;
+          // suppressNoBreak is a property of the link, not of the purpose that won.
+          const suppressNoBreak = LinkPurpose.options.suppressNoBreak &&
+            link.matches(LinkPurpose.options.suppressNoBreak);
+          if (showIcon && !suppressNoBreak &&
+            LinkPurpose.options.purposes[hits[0].type].iconPosition === 'beforeend') {
+            hitData.lastWord = findLastWord(link);
+            // Measure only links whose nobreak will be checked for overflow in markLinks.
+            if (hitData.lastWord && hitData.lastWord.word.length >= minOverflowCheckLength && link.parentElement) {
+              hitData.fontSize = parseFloat(window.getComputedStyle(link).fontSize);
+              hitData.originalWidth = link.parentElement.getBoundingClientRect().width;
+            }
           }
           marks.push(hitData)
         }
@@ -354,9 +495,6 @@ class LinkPurpose {
     const spacer = document.createElement('span');
     spacer.classList.add('link-purpose-spacer');
     spacer.textContent = '\u0020';
-    const lastWordRegex = /\s*\S+\s*$/g;
-    const initialSpaceRegex = /^\s+/g;
-    const trailingSpaceRegex = /\s+$/g;
 
     const markLinks = function () {
       if (!marks) {
@@ -366,8 +504,8 @@ class LinkPurpose {
       marks.forEach((mark) => {
         mark.hits.forEach((hit, i) => {
           LinkPurpose.unique++;
-          // Don't append redundant screen reader text.
-          // If no message exists, don't show it either.
+          // Don't append redundant screen reader or visible text.
+          // Use .match() in case options include a /g flag.
           let showText = !(LinkPurpose.options.purposes[hit.type].redundantStrings &&
             mark.link.textContent.length > 0 &&
             mark.link.textContent.match(LinkPurpose.options.purposes[hit.type].redundantStrings)) &&
@@ -382,109 +520,63 @@ class LinkPurpose {
 
             if (mark.showIcon) {
               mark.link.classList.add(LinkPurpose.options.baseLinkClass, LinkPurpose.options.purposes[hit.type].linkClass);
-              if (LinkPurpose.options.noIconOnImages) {
+              if (mark.hideOnImage) {
                 mark.link.classList.add('link-purpose-hide-on-image')
               }
 
-              if (!hit.suppressNoBreak && LinkPurpose.options.purposes[hit.type].iconPosition === 'beforeend') {
+              if (mark.lastWord) {
                 // Wrap last word in link into a nobreak span.
-                let lastTextNode = mark.link.lastChild
-                let trailingSpaceNodes = []
-                let excludedNode = [];
-                let commentNodes = [];
-
-                // Recurses down and back looking for text nodes.
-                // This WILL miss if the last element is an empty tree,
-                // but missing is better than moving possibly styled nodes.
-                while (lastTextNode) {
-                  if (lastTextNode.lastChild) {
-                    // lastChild has descendants (not a text node).
-                    if (lastTextNode.matches(LinkPurpose.options.insertIconOutsideHiddenSpan)) {
-                      // lastChild is hidden; move to previous sibling.
-                      excludedNode.push(lastTextNode);
-                      lastTextNode = lastTextNode.previousSibling;
-                    } else {
-                      // lastChild is visible, move to descendent node.
-                      lastTextNode = lastTextNode.lastChild
-                    }
-                  } else if (
-                    // lastChild IS text, but only whitespace
-                    lastTextNode.nodeName === '#text' &&
-                    lastTextNode.textContent.trim().length === 0 &&
-                    lastTextNode.previousSibling
-                  ) {
-                    // Move to previous sibling.
-                    trailingSpaceNodes.push(lastTextNode);
-                    lastTextNode = lastTextNode.previousSibling;
-                  } else if (lastTextNode.nodeName === "#comment") {
-                    // Comment, so move up to previous sibling.
-                    // Capture comment to re-introduce later.
-                    commentNodes.push(lastTextNode);
-                    lastTextNode = lastTextNode.previousSibling;
-                  } else {
-                    // Last node was valid text or no siblings remain.
-                    break
-                  }
+                // The nodes were found by findLastWord() during processLinks.
+                const {
+                  lastTextNode,
+                  keepText,
+                  word,
+                  onlyWord,
+                  leadingSpace,
+                  trailingSpace,
+                  trailingSpaceNodes,
+                  excludedNode,
+                  commentNodes
+                } = mark.lastWord;
+                // Wrap the last word in a span.
+                mark.breakPreventer = document.createElement('span')
+                mark.breakPreventer.textContent = word;
+                mark.breakPreventer.classList.add(LinkPurpose.options.noBreakClass, 'link-purpose-last-word')
+                if (excludedNode.length > 0) {
+                  excludedNode.forEach(node => {
+                    mark.breakPreventer.append(node);
+                  })
                 }
-                if (lastTextNode && lastTextNode.nodeName === '#text' && lastTextNode.textContent.length > 0) {
-                  // We have a last word situation.
-                  const lastText = lastTextNode.textContent
-                  const lastWord = lastText.match(lastWordRegex)
-                  if (lastWord && lastWord[0].length < 30) {
-                    // 30-char limit prevents horizontal scrollbars from urls.
-                    mark.lastWordLength = lastWord[0].length
-                    // Only word, and there isn't a span before it.
-                    // TODO: This will false negative on a code comment node type.
-                    const onlyWord = mark.lastWordLength === lastText.length
-                      && !((lastTextNode.previousElementSibling
-                        && lastTextNode.previousElementSibling.checkVisibility()
-                        && /^\s/.test(lastWord[0])));
-                    const leadingSpace = onlyWord ? lastText.match(initialSpaceRegex) : false;
-                    let trailingSpace = lastText.match(trailingSpaceRegex);
-                    // Wrap the last word in a span.
-                    mark.breakPreventer = document.createElement('span')
-                    mark.breakPreventer.textContent = lastWord[0].trim();
-                    mark.breakPreventer.classList.add(LinkPurpose.options.noBreakClass, 'link-purpose-last-word')
-                    if (excludedNode.length > 0) {
-                      excludedNode.forEach(node => {
-                        mark.breakPreventer.append(node);
-                      })
-                    }
-                    if (onlyWord) {
-                      // Wrap entire textContent.
-                      lastTextNode.textContent = '';
-                      lastTextNode.parentNode.append(mark.breakPreventer);
-                    } else {
-                      // Only wrap last string, and insert a controlled width spacer.
-                      lastTextNode.textContent = lastText.substring(0, lastText.length - lastWord[0].length)
-                      lastTextNode.parentNode.append(spacer.cloneNode(true), mark.breakPreventer)
-                    }
-                    if (leadingSpace) {
-                      mark.link.insertAdjacentText('beforebegin', '\u0020');
-                    }
-                    if (trailingSpaceNodes.length > 0) {
-                      trailingSpace = true;
-                      // Move whitespace out of link.
-                      trailingSpaceNodes.forEach(space => {
-                        // noinspection JSPrimitiveTypeWrapperUsage
-                        space.textContent = ''
-                      })
-                    }
-                    if (trailingSpace) {
-                      mark.link.insertAdjacentText('afterend', '\u0020');
-                    }
-                    // HTML comments inside the link should retain relative position.
-                    if (commentNodes.length > 0) {
-                      commentNodes.forEach((comment) => {
-                        // Clone to be sure comment wrapper moves.
-                        mark.link.append(comment.cloneNode(true));
-                        comment.remove();
-                      });
-                    }
-                    // Insert the icon into the span rather than the link.
-                    spanTarget = mark.breakPreventer
-                  }
+                if (onlyWord) {
+                  // Wrap entire textContent.
+                  lastTextNode.textContent = '';
+                  lastTextNode.parentNode.append(mark.breakPreventer);
+                } else {
+                  // Only wrap last string, and insert a controlled width spacer.
+                  lastTextNode.textContent = keepText
+                  lastTextNode.parentNode.append(spacer.cloneNode(true), mark.breakPreventer)
                 }
+                // Move whitespace out of the link (findLastWord chose the replacement spaces).
+                if (leadingSpace) {
+                  mark.link.insertAdjacentText('beforebegin', leadingSpace);
+                }
+                trailingSpaceNodes.forEach(space => {
+                  // noinspection JSPrimitiveTypeWrapperUsage
+                  space.textContent = ''
+                })
+                if (trailingSpace) {
+                  mark.link.insertAdjacentText('afterend', trailingSpace);
+                }
+                // HTML comments inside the link should retain relative position.
+                if (commentNodes.length > 0) {
+                  commentNodes.forEach((comment) => {
+                    // Clone to be sure comment wrapper moves.
+                    mark.link.append(comment.cloneNode(true));
+                    comment.remove();
+                  });
+                }
+                // Insert the icon into the span rather than the link.
+                spanTarget = mark.breakPreventer
               }
 
               const iconSpan = document.createElement('span')
@@ -540,14 +632,15 @@ class LinkPurpose {
       })
 
       // Remove nobreak class if it expanded the link container.
-      // This is slow, so only bother for words longer than 8 characters.
-      marks.forEach((mark) => {
-        if (mark.originalWidth && mark.fontSize && mark.breakPreventer &&
-          mark.lastWordLength && mark.lastWordLength > 8 &&
-          mark.link.getBoundingClientRect().width / mark.fontSize >
-          (mark.originalWidth + mark.fontSize) / mark.fontSize) {
-          mark.breakPreventer.classList.remove(LinkPurpose.options.noBreakClass)
-        }
+      // processLinks only stored originalWidth for words of minOverflowCheckLength or more.
+      // Measure every link before removing any class: interleaving the reads with
+      // the removals would force a layout per link.
+      const expanded = marks.filter((mark) =>
+        mark.breakPreventer && mark.originalWidth && mark.fontSize &&
+        mark.link.getBoundingClientRect().width > mark.originalWidth + mark.fontSize
+      );
+      expanded.forEach((mark) => {
+        mark.breakPreventer.classList.remove(LinkPurpose.options.noBreakClass)
       })
     }
 

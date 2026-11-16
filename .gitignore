@@ -1,1 +1,11 @@
 node_modules
+.DS_Store
+
+# Playwright e2e output
+e2e/test-results/
+e2e/report/
+
+# Agents
+/.agents/settings.local.json
+/.agents/scratch/
+/.claude

@@ -61,6 +61,12 @@
                     <li>
                         <a href="/" target="_blank">_Blank link</a>
                     </li>
+                    <li>
+                        <a href="/" target="_blank">Opens in new tab</a>
+                    </li>
+                    <li>
+                        <a href="/" target="_blank">Shown in other windows</a>
+                    </li>
                 </ul>
             </section>
             <section id="document">
@@ -103,6 +109,9 @@
                     </li>
                     <li>
                         <a href="/" download>&nbsp; Zip</a> with preceding nbsp; whitespace
+                    </li>
+                    <li>
+                        <a href="/" download>&nbsp;Zip&nbsp;</a>only no-break spaces around the word
                     </li>
                     <li>
                         <a href="https://www.princeton.edu" download target="_blank">Zip from external in _blank
@@ -200,6 +209,7 @@
             <h2>Suppress no-break</h2>
             <ul>
                 <li><a href="/" download="">This should not have a nobreak</a></li>
+                <li><a href="/example.pdf" download="">Document outranks download, still no nobreak</a></li>
             </ul>
         </div>
         <div id="extra-description">
