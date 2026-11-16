@@ -5,7 +5,7 @@ class LinkPurpose {
   // ESLint config
 
   constructor(option) {
-    LinkPurpose.version = '1.0.9';
+    LinkPurpose.version = '1.0.10';
 
     let checkLinks = [];
     let marks = [];
@@ -363,22 +363,22 @@ class LinkPurpose {
       // Measure the limit without whitespace: source indentation is not part of the word.
       // Scan backwards instead a $-anchored regex; faster when the text is long.
       const wordEnd = lastText.trimEnd().length
-      let wordStart = wordEnd
-      while (wordStart > 0 && !whitespaceRegex.test(lastText[wordStart - 1])) {
-        wordStart--
-        if (wordEnd - wordStart >= maxNoBreakLength) {
+      let lastWordStart = wordEnd
+      while (lastWordStart > 0 && !whitespaceRegex.test(lastText[lastWordStart - 1])) {
+        lastWordStart--
+        if (wordEnd - lastWordStart >= maxNoBreakLength) {
           return false
         }
       }
-      if (wordStart === wordEnd) {
+      if (lastWordStart === wordEnd) {
         return false
       }
       // Start of the whitespace before the word, which is removed from the text node along with the word.
-      let spaceStart = wordStart
+      let spaceStart = lastWordStart
       while (spaceStart > 0 && whitespaceRegex.test(lastText[spaceStart - 1])) {
         spaceStart--
       }
-      const word = lastText.substring(wordStart, wordEnd)
+      const word = lastText.substring(lastWordStart, wordEnd)
 
       // Only word, and there isn't a visible element before it.
       // TODO: This will false negative on a code comment node type.
@@ -386,11 +386,11 @@ class LinkPurpose {
       const onlyWord = spaceStart === 0 &&
         !((lastTextNode.previousElementSibling &&
           lastTextNode.previousElementSibling.checkVisibility() &&
-          wordStart > 0));
+          lastWordStart > 0));
 
       // Whitespace moved out of the link is replaced by one space outside it.
       // Otherwise the replaced whitespace is the controlled-width spacer.
-      const leadingSpace = onlyWord ? outsideSpace(lastText.substring(0, wordStart)) : '';
+      const leadingSpace = onlyWord ? outsideSpace(lastText.substring(0, lastWordStart)) : '';
       // trailingSpaceNodes were collected outermost first; join them in document order.
       const trailingSpace = outsideSpace(lastText.substring(wordEnd) +
         trailingSpaceNodes.map(node => node.textContent).reverse().join(''));
